@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { createAppointment } from "@/app/actions/create-appointment";
+import { useRouter } from "next/navigation";
 
 type ServiceItem = {
   id: string;
@@ -42,6 +43,8 @@ export default function BookingForm({
   closeTime,
   services,
 }: BookingFormProps) {
+  const router = useRouter();
+
   const [selectedServiceId, setSelectedServiceId] = useState(
     services[0]?.id ?? ""
   );
@@ -101,6 +104,32 @@ export default function BookingForm({
 
     loadSlots();
   }, [selectedServiceId, selectedDate]);
+
+  useEffect(() => {
+    if (!state.ok || !selectedService || !selectedSlot) {
+      return;
+    }
+
+    const params = new URLSearchParams({
+      date: selectedDate,
+      slot: selectedSlot,
+      service: selectedService.name,
+      name: customerName,
+    });
+
+    setSelectedSlot("");
+    setCustomerName("");
+    setCustomerPhone("");
+
+    router.push(`/booking-success?${params.toString()}`);
+  }, [
+    state.ok,
+    selectedDate,
+    selectedSlot,
+    selectedService,
+    customerName,
+    router,
+  ]);
 
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">

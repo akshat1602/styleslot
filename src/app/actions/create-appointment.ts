@@ -4,22 +4,57 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-const bookingSchema = z.object({
-  serviceId: z.string().min(1, "Please select a service"),
-  appointmentDate: z.string().min(1, "Please select a date"),
-  selectedSlot: z.string().min(1, "Please select a time slot"),
-  customerName: z.string().min(2, "Name is too short"),
-  customerPhone: z.string().min(10, "Phone number is too short"),
+type CreateAppointmentState = {
+  ok: boolean;
+  message: string;
+};
+
+const createAppointmentSchema = z.object({
+  serviceId: z.string().min(1, "Please select a service."),
+  appointmentDate: z.string().min(1, "Please select a date."),
+  selectedSlot: z.string().min(1, "Please select a time slot."),
+  customerName: z.string().trim().min(2, "Please enter your name."),
+  customerPhone: z.string().trim().min(8, "Please enter a valid phone number."),
 });
 
-function parseTimeToDate(dateString: string, timeString: string) {
+function combineDateAndTime(dateString: string, timeString: string) {
   const [year, month, day] = dateString.split("-").map(Number);
   const [hours, minutes] = timeString.split(":").map(Number);
 
   return new Date(year, month - 1, day, hours, minutes, 0, 0);
 }
 
-export async function createAppointment(_: unknown, formData: FormData) {
+function getDayRange(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+  const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+  return { startOfDay, endOfDay };
+}
+
+function isPastDate(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+
+  const selectedDate = new Date(year, month - 1, day, 0, 0, 0, 0);
+  const now = new Date();
+  const today = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    0,
+    0,
+    0,
+    0
+  );
+
+  return selectedDate < today;
+}
+
+export async function createAppointment(
+  _prevState: CreateAppointmentState,
+  formData: FormData
+): Promise<CreateAppointmentState> {
   const raw = {
     serviceId: String(formData.get("serviceId") ?? ""),
     appointmentDate: String(formData.get("appointmentDate") ?? ""),
@@ -28,12 +63,21 @@ export async function createAppointment(_: unknown, formData: FormData) {
     customerPhone: String(formData.get("customerPhone") ?? ""),
   };
 
-  const parsed = bookingSchema.safeParse(raw);
+  const parsed = createAppointmentSchema.safeParse(raw);
 
   if (!parsed.success) {
+    const firstError = Object.values(parsed.error.flatten().fieldErrors)[0]?.[0];
+
     return {
       ok: false,
-      message: "Please fill all fields correctly.",
+      message: firstError ?? "Please check your form details.",
+    };
+  }
+
+  if (isPastDate(parsed.data.appointmentDate)) {
+    return {
+      ok: false,
+      message: "You cannot book an appointment for a past date.",
     };
   }
 
@@ -42,31 +86,48 @@ export async function createAppointment(_: unknown, formData: FormData) {
     select: {
       id: true,
       durationMin: true,
+      isActive: true,
     },
   });
 
-  if (!service) {
+  if (!service || !service.isActive) {
     return {
       ok: false,
-      message: "Selected service not found.",
+      message: "Selected service is not available.",
     };
   }
 
-  const startTime = parseTimeToDate(
+  const startTime = combineDateAndTime(
     parsed.data.appointmentDate,
     parsed.data.selectedSlot
   );
 
-  const endTime = new Date(
-    startTime.getTime() + service.durationMin * 60 * 1000
-  );
+  if (Number.isNaN(startTime.getTime())) {
+    return {
+      ok: false,
+      message: "Invalid appointment time selected.",
+    };
+  }
 
-  const [year, month, day] = parsed.data.appointmentDate.split("-").map(Number);
-  const appointmentDate = new Date(year, month - 1, day);
+  const now = new Date();
 
-  const conflict = await prisma.appointment.findFirst({
+  if (startTime <= now) {
+    return {
+      ok: false,
+      message: "You cannot book a past time slot.",
+    };
+  }
+
+  const endTime = new Date(startTime.getTime() + service.durationMin * 60 * 1000);
+
+  const { startOfDay, endOfDay } = getDayRange(parsed.data.appointmentDate);
+
+  const conflictingAppointment = await prisma.appointment.findFirst({
     where: {
-      appointmentDate,
+      appointmentDate: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
       status: {
         not: "CANCELLED",
       },
@@ -82,19 +143,19 @@ export async function createAppointment(_: unknown, formData: FormData) {
     },
   });
 
-  if (conflict) {
+  if (conflictingAppointment) {
     return {
       ok: false,
-      message: "This slot was just booked. Please choose another slot.",
+      message: "This slot has just been booked. Please choose another time.",
     };
   }
 
   await prisma.appointment.create({
     data: {
-      serviceId: service.id,
-      customerName: parsed.data.customerName.trim(),
-      customerPhone: parsed.data.customerPhone.trim(),
-      appointmentDate,
+      serviceId: parsed.data.serviceId,
+      customerName: parsed.data.customerName,
+      customerPhone: parsed.data.customerPhone,
+      appointmentDate: startOfDay,
       startTime,
       endTime,
       status: "BOOKED",
@@ -103,6 +164,7 @@ export async function createAppointment(_: unknown, formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/dashboard");
+  revalidatePath(`/dashboard?date=${parsed.data.appointmentDate}`);
 
   return {
     ok: true,
