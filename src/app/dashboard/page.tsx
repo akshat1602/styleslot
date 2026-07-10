@@ -160,10 +160,28 @@ function StatusActionButtons({
 }) {
   const isCompleted = currentStatus === "COMPLETED";
   const isCancelled = currentStatus === "CANCELLED";
-  const isLocked = currentStatus !== "BOOKED";
+  const isBooked = currentStatus === "BOOKED";
+  const isLocked = !isBooked;
 
   return (
     <div className="flex flex-wrap gap-2">
+      {isBooked ? (
+        <Link
+          href={`/dashboard/appointments/${appointmentId}/edit?date=${selectedDate}`}
+          className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
+        >
+          Reschedule
+        </Link>
+      ) : (
+        <button
+          type="button"
+          disabled
+          className="rounded-lg bg-neutral-200 px-3 py-2 text-xs font-medium text-neutral-500"
+        >
+          Reschedule
+        </button>
+      )}
+
       <form action={updateAppointmentStatus}>
         <input type="hidden" name="appointmentId" value={appointmentId} />
         <input type="hidden" name="status" value="COMPLETED" />
