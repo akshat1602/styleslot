@@ -10,6 +10,11 @@ const updateStatusSchema = z.object({
   date: z.string().min(1),
 });
 
+const deleteAppointmentSchema = z.object({
+  appointmentId: z.string().min(1),
+  date: z.string().min(1),
+});
+
 export async function updateAppointmentStatus(formData: FormData) {
   const raw = {
     appointmentId: String(formData.get("appointmentId") ?? ""),
@@ -30,6 +35,28 @@ export async function updateAppointmentStatus(formData: FormData) {
     },
     data: {
       status: parsed.data.status,
+    },
+  });
+
+  revalidatePath(`/dashboard?date=${parsed.data.date}`);
+  revalidatePath("/dashboard");
+}
+
+export async function deleteAppointment(formData: FormData) {
+  const raw = {
+    appointmentId: String(formData.get("appointmentId") ?? ""),
+    date: String(formData.get("date") ?? ""),
+  };
+
+  const parsed = deleteAppointmentSchema.safeParse(raw);
+
+  if (!parsed.success) {
+    return;
+  }
+
+  await prisma.appointment.deleteMany({
+    where: {
+      id: parsed.data.appointmentId,
     },
   });
 
