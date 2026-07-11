@@ -2,7 +2,6 @@ import Link from "next/link";
 import { format, subDays } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import { updateAppointmentStatus, deleteAppointment } from "./actions";
-import { logoutAdmin } from "@/app/login/actions";
 import DashboardDateFilter from "@/components/dashboard-date-filter";
 import DeleteAppointmentButton from "@/components/delete-appointment-button";
 
@@ -37,13 +36,13 @@ function getDayRange(dateString: string) {
 function getStatusClasses(status: string) {
   switch (status) {
     case "BOOKED":
-      return "bg-blue-100 text-blue-700";
+      return "bg-blue-100 text-blue-700 ring-1 ring-blue-200";
     case "COMPLETED":
-      return "bg-green-100 text-green-700";
+      return "bg-green-100 text-green-700 ring-1 ring-green-200";
     case "CANCELLED":
-      return "bg-red-100 text-red-700";
+      return "bg-red-100 text-red-700 ring-1 ring-red-200";
     default:
-      return "bg-neutral-100 text-neutral-700";
+      return "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200";
   }
 }
 
@@ -123,7 +122,7 @@ function StatusFilterLinks({
             href={href}
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               isActive
-                ? "bg-neutral-900 text-white"
+                ? "bg-neutral-900 text-white shadow-sm"
                 : "bg-white text-neutral-700 ring-1 ring-neutral-200 hover:bg-neutral-100"
             }`}
           >
@@ -148,7 +147,7 @@ function SearchForm({
     <form
       action="/dashboard"
       method="GET"
-      className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-center"
+      className="ui-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center"
     >
       <input type="hidden" name="date" value={selectedDate} />
       {selectedStatus !== "ALL" ? (
@@ -160,14 +159,11 @@ function SearchForm({
         name="query"
         defaultValue={searchQuery}
         placeholder="Search customer, phone, or service"
-        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
+        className="ui-input"
       />
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          className="rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
-        >
+        <button type="submit" className="ui-btn ui-btn-primary">
           Search
         </button>
 
@@ -177,7 +173,7 @@ function SearchForm({
             status: selectedStatus,
             page: 1,
           })}
-          className="rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+          className="ui-btn ui-btn-secondary"
         >
           Clear
         </Link>
@@ -203,34 +199,36 @@ function SummaryCards({
     {
       label: "Total appointments",
       value: totalAppointments,
+      tone: "text-neutral-900",
     },
     {
       label: "Booked",
       value: bookedCount,
+      tone: "text-blue-700",
     },
     {
       label: "Completed",
       value: completedCount,
+      tone: "text-green-700",
     },
     {
       label: "Cancelled",
       value: cancelledCount,
+      tone: "text-red-700",
     },
     {
       label: "Completed revenue",
       value: `₹${completedRevenue}`,
+      tone: "text-neutral-900",
     },
   ];
 
   return (
     <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
       {cards.map((card) => (
-        <div
-          key={card.label}
-          className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-neutral-200"
-        >
+        <div key={card.label} className="ui-stat-card">
           <p className="text-sm text-neutral-500">{card.label}</p>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-neutral-900">
+          <p className={`mt-3 text-2xl font-bold tracking-tight ${card.tone}`}>
             {card.value}
           </p>
         </div>
@@ -272,12 +270,9 @@ function AnalyticsCards({
   return (
     <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => (
-        <div
-          key={card.label}
-          className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-neutral-200"
-        >
+        <div key={card.label} className="ui-stat-card">
           <p className="text-sm text-neutral-500">{card.label}</p>
-          <p className="mt-2 text-2xl font-bold tracking-tight text-neutral-900">
+          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
             {card.value}
           </p>
         </div>
@@ -305,7 +300,7 @@ function StatusActionButtons({
       {isBooked ? (
         <Link
           href={`/dashboard/appointments/${appointmentId}/edit?date=${selectedDate}`}
-          className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
+          className="rounded-xl bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
         >
           Reschedule
         </Link>
@@ -313,7 +308,7 @@ function StatusActionButtons({
         <button
           type="button"
           disabled
-          className="rounded-lg bg-neutral-200 px-3 py-2 text-xs font-medium text-neutral-500"
+          className="rounded-xl bg-neutral-200 px-3 py-2 text-xs font-medium text-neutral-500"
         >
           Reschedule
         </button>
@@ -326,7 +321,7 @@ function StatusActionButtons({
         <button
           type="submit"
           disabled={isCompleted || isLocked}
-          className="rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-green-200"
+          className="rounded-xl bg-green-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-green-200"
         >
           Complete
         </button>
@@ -339,7 +334,7 @@ function StatusActionButtons({
         <button
           type="submit"
           disabled={isCancelled || isLocked}
-          className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200"
+          className="rounded-xl bg-red-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200"
         >
           Cancel
         </button>
@@ -372,7 +367,7 @@ function PaginationControls({
   }
 
   return (
-    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-center sm:justify-between">
+    <div className="ui-card mt-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-neutral-600">
         Page <span className="font-medium">{currentPage}</span> of{" "}
         <span className="font-medium">{totalPages}</span>
@@ -429,7 +424,7 @@ function TopServicesPanel({
   }[];
 }) {
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+    <div className="ui-card h-full p-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-neutral-900">
@@ -449,29 +444,34 @@ function TopServicesPanel({
       </div>
 
       {items.length === 0 ? (
-        <p className="mt-6 text-sm text-neutral-500">
+        <div className="mt-6 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5 text-sm text-neutral-500">
           No recent service activity found.
-        </p>
+        </div>
       ) : (
         <div className="mt-6 space-y-3">
-          {items.map((service) => (
+          {items.map((service, index) => (
             <div
               key={service.id}
-              className="rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200"
+              className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-neutral-900">
-                    {service.name}
-                  </p>
-                  <p className="mt-1 text-sm text-neutral-600">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-xs font-semibold text-neutral-700 ring-1 ring-neutral-200">
+                      {index + 1}
+                    </span>
+                    <p className="truncate text-sm font-semibold text-neutral-900">
+                      {service.name}
+                    </p>
+                  </div>
+                  <p className="mt-2 text-sm text-neutral-600">
                     {service.totalBookings} booking
                     {service.totalBookings === 1 ? "" : "s"} ·{" "}
                     {service.completedBookings} completed
                   </p>
                 </div>
 
-                <p className="text-sm font-medium text-neutral-900">
+                <p className="text-sm font-semibold text-neutral-900">
                   ₹{service.revenue}
                 </p>
               </div>
@@ -493,7 +493,7 @@ function RevenueBreakdownPanel({
   }[];
 }) {
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+    <div className="ui-card h-full p-6">
       <h2 className="text-lg font-semibold text-neutral-900">
         Revenue breakdown
       </h2>
@@ -502,15 +502,15 @@ function RevenueBreakdownPanel({
       </p>
 
       {items.length === 0 ? (
-        <p className="mt-6 text-sm text-neutral-500">
+        <div className="mt-6 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5 text-sm text-neutral-500">
           No completed appointment revenue found.
-        </p>
+        </div>
       ) : (
         <div className="mt-6 space-y-3">
           {items.map((item) => (
             <div
               key={item.date}
-              className="flex items-center justify-between rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200"
+              className="flex items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 p-4"
             >
               <div>
                 <p className="text-sm font-medium text-neutral-900">
@@ -548,7 +548,7 @@ function RecentAppointmentsPanel({
   }[];
 }) {
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+    <div className="ui-card h-full p-6">
       <h2 className="text-lg font-semibold text-neutral-900">
         Recent appointments
       </h2>
@@ -557,22 +557,22 @@ function RecentAppointmentsPanel({
       </p>
 
       {items.length === 0 ? (
-        <p className="mt-6 text-sm text-neutral-500">
+        <div className="mt-6 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5 text-sm text-neutral-500">
           No appointments found.
-        </p>
+        </div>
       ) : (
         <div className="mt-6 space-y-3">
           {items.map((appointment) => (
             <div
               key={appointment.id}
-              className="rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200"
+              className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4"
             >
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-neutral-900">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-neutral-900">
                     {appointment.customerName}
                   </p>
-                  <p className="mt-1 text-sm text-neutral-600">
+                  <p className="mt-1 truncate text-sm text-neutral-600">
                     {appointment.service.name} · {appointment.customerPhone}
                   </p>
                   <p className="mt-1 text-sm text-neutral-500">
@@ -798,261 +798,296 @@ export default async function DashboardPage({
   });
 
   return (
-    <main className="min-h-screen bg-neutral-50 text-neutral-900">
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-500">
+    <section className="p-3 sm:p-4 lg:p-5">
+      <div className="mb-6 rounded-[28px] border border-neutral-200 bg-white/95 p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="ui-pill bg-neutral-900 text-white">
+                Overview
+              </span>
+              <span className="ui-pill bg-white text-neutral-600 ring-1 ring-neutral-200">
+                Daily operations
+              </span>
+            </div>
+
+            <p className="mt-4 text-sm font-medium text-neutral-500">
               Salon dashboard
             </p>
-            <h1 className="mt-1 text-3xl font-bold tracking-tight">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
               Daily appointments
-            </h1>
-            <p className="mt-2 text-sm text-neutral-600">
-              View operations and business insights in one place.
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
+              Track bookings, monitor revenue, manage services, and take quick
+              actions from one place.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:items-end">
+          <div className="flex flex-col gap-3 lg:min-w-[260px] lg:items-stretch">
             <DashboardDateFilter selectedDate={selectedDate} />
 
             <Link
               href="/dashboard/services"
-              className="rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+              className="ui-btn ui-btn-primary w-full"
             >
               Manage services
             </Link>
+          </div>
+        </div>
+      </div>
 
-            <form action={logoutAdmin}>
-              <button
-                type="submit"
-                className="rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+      <SummaryCards
+        totalAppointments={totalAppointments}
+        bookedCount={bookedCount}
+        completedCount={completedCount}
+        cancelledCount={cancelledCount}
+        completedRevenue={completedRevenue}
+      />
+
+      <AnalyticsCards
+        totalServices={totalServices}
+        activeServices={activeServices}
+        weeklyAppointments={weeklyAppointmentsCount}
+        weeklyCompletedRevenue={weeklyCompletedRevenue}
+      />
+
+      <div className="mb-6 grid gap-6 xl:grid-cols-3">
+        <div className="xl:col-span-1">
+          <TopServicesPanel items={topServices} />
+        </div>
+
+        <div className="xl:col-span-1">
+          <RevenueBreakdownPanel items={revenueByDay} />
+        </div>
+
+        <div className="xl:col-span-1">
+          <RecentAppointmentsPanel items={recentAppointments} />
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <SearchForm
+          selectedDate={selectedDate}
+          selectedStatus={selectedStatus}
+          searchQuery={searchQuery}
+        />
+      </div>
+
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm leading-6 text-neutral-600">
+          Showing{" "}
+          <span className="font-medium">
+            {totalFilteredAppointments === 0 ? 0 : startIndex + 1}
+          </span>
+          -
+          <span className="font-medium">
+            {Math.min(endIndex, totalFilteredAppointments)}
+          </span>{" "}
+          of <span className="font-medium">{totalFilteredAppointments}</span>{" "}
+          appointment
+          {totalFilteredAppointments === 1 ? "" : "s"} on{" "}
+          <span className="font-medium">{selectedDate}</span>
+          {selectedStatus !== "ALL" ? (
+            <>
+              {" "}
+              ·{" "}
+              <span className="font-medium">
+                {getStatusFilterLabel(selectedStatus)}
+              </span>
+            </>
+          ) : null}
+          {searchQuery ? (
+            <>
+              {" "}
+              · <span className="font-medium">Search:</span> "{searchQuery}"
+            </>
+          ) : null}
+        </p>
+
+        <Link
+          href="/"
+          className="text-sm font-medium text-neutral-700 underline underline-offset-4"
+        >
+          Back to booking page
+        </Link>
+      </div>
+
+      <div className="mb-6">
+        <StatusFilterLinks
+          selectedDate={selectedDate}
+          selectedStatus={selectedStatus}
+          searchQuery={searchQuery}
+        />
+      </div>
+
+      {appointments.length === 0 ? (
+        <div className="ui-card p-8 text-center sm:p-10">
+          <div className="mx-auto max-w-md">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
               >
-                Logout
-              </button>
-            </form>
-          </div>
-        </div>
+                <path
+                  d="M8 2v4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M16 2v4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <rect
+                  x="3"
+                  y="5"
+                  width="18"
+                  height="16"
+                  rx="2"
+                />
+                <path
+                  d="M3 10h18"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
 
-        <SummaryCards
-          totalAppointments={totalAppointments}
-          bookedCount={bookedCount}
-          completedCount={completedCount}
-          cancelledCount={cancelledCount}
-          completedRevenue={completedRevenue}
-        />
-
-        <AnalyticsCards
-          totalServices={totalServices}
-          activeServices={activeServices}
-          weeklyAppointments={weeklyAppointmentsCount}
-          weeklyCompletedRevenue={weeklyCompletedRevenue}
-        />
-
-        <div className="mb-6 grid gap-6 xl:grid-cols-3">
-          <div className="xl:col-span-1">
-            <TopServicesPanel items={topServices} />
-          </div>
-
-          <div className="xl:col-span-1">
-            <RevenueBreakdownPanel items={revenueByDay} />
-          </div>
-
-          <div className="xl:col-span-1">
-            <RecentAppointmentsPanel items={recentAppointments} />
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <SearchForm
-            selectedDate={selectedDate}
-            selectedStatus={selectedStatus}
-            searchQuery={searchQuery}
-          />
-        </div>
-
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-neutral-600">
-            Showing{" "}
-            <span className="font-medium">
-              {totalFilteredAppointments === 0 ? 0 : startIndex + 1}
-            </span>
-            -
-            <span className="font-medium">
-              {Math.min(endIndex, totalFilteredAppointments)}
-            </span>{" "}
-            of <span className="font-medium">{totalFilteredAppointments}</span>{" "}
-            appointment
-            {totalFilteredAppointments === 1 ? "" : "s"} on{" "}
-            <span className="font-medium">{selectedDate}</span>
-            {selectedStatus !== "ALL" ? (
-              <>
-                {" "}
-                ·{" "}
-                <span className="font-medium">
-                  {getStatusFilterLabel(selectedStatus)}
-                </span>
-              </>
-            ) : null}
-            {searchQuery ? (
-              <>
-                {" "}
-                · <span className="font-medium">Search:</span> "{searchQuery}"
-              </>
-            ) : null}
-          </p>
-
-          <Link
-            href="/"
-            className="text-sm font-medium text-neutral-700 underline underline-offset-4"
-          >
-            Back to booking page
-          </Link>
-        </div>
-
-        <div className="mb-6">
-          <StatusFilterLinks
-            selectedDate={selectedDate}
-            selectedStatus={selectedStatus}
-            searchQuery={searchQuery}
-          />
-        </div>
-
-        {appointments.length === 0 ? (
-          <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-neutral-200">
-            <h2 className="text-lg font-semibold">No appointments found</h2>
-            <p className="mt-2 text-sm text-neutral-500">
+            <h2 className="mt-4 text-lg font-semibold text-neutral-900">
+              No appointments found
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-neutral-500">
               No bookings match the current date, status, and search filters.
             </p>
           </div>
-        ) : (
-          <>
-            <div className="hidden overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-neutral-200 lg:block">
-              <table className="min-w-full text-left">
-                <thead className="bg-neutral-100 text-sm text-neutral-600">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Time</th>
-                    <th className="px-4 py-3 font-medium">Service</th>
-                    <th className="px-4 py-3 font-medium">Customer</th>
-                    <th className="px-4 py-3 font-medium">Phone</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {appointments.map((appointment) => (
-                    <tr
-                      key={appointment.id}
-                      className="border-t border-neutral-200"
-                    >
-                      <td className="px-4 py-4 text-sm text-neutral-700">
-                        {format(appointment.startTime, "hh:mm a")}
-                      </td>
-                      <td className="px-4 py-4">
-                        <p className="text-sm font-medium text-neutral-900">
-                          {appointment.service.name}
-                        </p>
-                        <p className="text-xs text-neutral-500">
-                          {appointment.service.durationMin} min · ₹
-                          {appointment.service.price}
-                        </p>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-neutral-700">
-                        {appointment.customerName}
-                      </td>
-                      <td className="px-4 py-4 text-sm text-neutral-700">
-                        {appointment.customerPhone}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                            appointment.status
-                          )}`}
-                        >
-                          {appointment.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <StatusActionButtons
-                          appointmentId={appointment.id}
-                          currentStatus={appointment.status}
-                          selectedDate={selectedDate}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="grid gap-3 lg:hidden">
-              {appointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
+        </div>
+      ) : (
+        <>
+          <div className="hidden overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm lg:block">
+            <table className="min-w-full text-left">
+              <thead className="bg-neutral-50 text-sm text-neutral-600">
+                <tr>
+                  <th className="px-4 py-4 font-medium">Time</th>
+                  <th className="px-4 py-4 font-medium">Service</th>
+                  <th className="px-4 py-4 font-medium">Customer</th>
+                  <th className="px-4 py-4 font-medium">Phone</th>
+                  <th className="px-4 py-4 font-medium">Status</th>
+                  <th className="px-4 py-4 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointments.map((appointment) => (
+                  <tr
+                    key={appointment.id}
+                    className="border-t border-neutral-200 align-top"
+                  >
+                    <td className="px-4 py-4 text-sm font-medium text-neutral-800">
+                      {format(appointment.startTime, "hh:mm a")}
+                    </td>
+                    <td className="px-4 py-4">
                       <p className="text-sm font-semibold text-neutral-900">
-                        {format(appointment.startTime, "hh:mm a")}
-                      </p>
-                      <p className="mt-1 text-sm text-neutral-600">
                         {appointment.service.name}
                       </p>
-                    </div>
-
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                        appointment.status
-                      )}`}
-                    >
-                      {appointment.status}
-                    </span>
-                  </div>
-
-                  <div className="mt-4 space-y-1 text-sm text-neutral-600">
-                    <p>
-                      <span className="font-medium text-neutral-800">
-                        Customer:
-                      </span>{" "}
+                      <p className="mt-1 text-xs text-neutral-500">
+                        {appointment.service.durationMin} min · ₹
+                        {appointment.service.price}
+                      </p>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-neutral-700">
                       {appointment.customerName}
-                    </p>
-                    <p>
-                      <span className="font-medium text-neutral-800">
-                        Phone:
-                      </span>{" "}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-neutral-700">
                       {appointment.customerPhone}
+                    </td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                          appointment.status
+                        )}`}
+                      >
+                        {appointment.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusActionButtons
+                        appointmentId={appointment.id}
+                        currentStatus={appointment.status}
+                        selectedDate={selectedDate}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid gap-3 lg:hidden">
+            {appointments.map((appointment) => (
+              <div key={appointment.id} className="ui-card p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {format(appointment.startTime, "hh:mm a")}
                     </p>
-                    <p>
-                      <span className="font-medium text-neutral-800">
-                        Details:
-                      </span>{" "}
-                      {appointment.service.durationMin} min · ₹
-                      {appointment.service.price}
+                    <p className="mt-1 text-sm text-neutral-600">
+                      {appointment.service.name}
                     </p>
                   </div>
 
-                  <div className="mt-4">
-                    <StatusActionButtons
-                      appointmentId={appointment.id}
-                      currentStatus={appointment.status}
-                      selectedDate={selectedDate}
-                    />
-                  </div>
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                      appointment.status
+                    )}`}
+                  >
+                    {appointment.status}
+                  </span>
                 </div>
-              ))}
-            </div>
 
-            <PaginationControls
-              selectedDate={selectedDate}
-              selectedStatus={selectedStatus}
-              searchQuery={searchQuery}
-              currentPage={safeCurrentPage}
-              totalPages={totalPages}
-            />
-          </>
-        )}
-      </section>
-    </main>
+                <div className="mt-4 space-y-1 text-sm text-neutral-600">
+                  <p>
+                    <span className="font-medium text-neutral-800">
+                      Customer:
+                    </span>{" "}
+                    {appointment.customerName}
+                  </p>
+                  <p>
+                    <span className="font-medium text-neutral-800">
+                      Phone:
+                    </span>{" "}
+                    {appointment.customerPhone}
+                  </p>
+                  <p>
+                    <span className="font-medium text-neutral-800">
+                      Details:
+                    </span>{" "}
+                    {appointment.service.durationMin} min · ₹
+                    {appointment.service.price}
+                  </p>
+                </div>
+
+                <div className="mt-4">
+                  <StatusActionButtons
+                    appointmentId={appointment.id}
+                    currentStatus={appointment.status}
+                    selectedDate={selectedDate}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <PaginationControls
+            selectedDate={selectedDate}
+            selectedStatus={selectedStatus}
+            searchQuery={searchQuery}
+            currentPage={safeCurrentPage}
+            totalPages={totalPages}
+          />
+        </>
+      )}
+    </section>
   );
 }

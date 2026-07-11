@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { logoutAdmin } from "@/app/login/actions";
 import { toggleServiceActive } from "./actions";
+
+function getServiceStatusClasses(isActive: boolean) {
+  return isActive
+    ? "bg-green-100 text-green-700 ring-1 ring-green-200"
+    : "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200";
+}
 
 export default async function ServicesPage() {
   const services = await prisma.service.findMany({
@@ -22,204 +27,269 @@ export default async function ServicesPage() {
     ],
   });
 
+  const totalServices = services.length;
+  const activeServices = services.filter((service) => service.isActive).length;
+  const inactiveServices = totalServices - activeServices;
+  const totalAppointments = services.reduce(
+    (sum, service) => sum + service._count.appointments,
+    0
+  );
+
   return (
-    <main className="min-h-screen bg-neutral-50 text-neutral-900">
-      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-        <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-neutral-500">
+    <section className="p-3 sm:p-4 lg:p-5">
+      <div className="mb-6 rounded-[28px] border border-neutral-200 bg-white/95 p-6 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="ui-pill bg-neutral-900 text-white">
+                Services
+              </span>
+              <span className="ui-pill bg-white text-neutral-600 ring-1 ring-neutral-200">
+                Dashboard management
+              </span>
+            </div>
+
+            <p className="mt-4 text-sm font-medium text-neutral-500">
               Dashboard / Services
             </p>
-            <h1 className="mt-1 text-3xl font-bold tracking-tight">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
               Manage services
-            </h1>
-            <p className="mt-2 text-sm text-neutral-600">
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
               Add, edit, and control which services are available for booking.
+              Keep offerings organized and easy to manage.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:items-end">
+          <div className="flex flex-col gap-3 lg:min-w-[260px] lg:items-stretch">
             <Link
               href="/dashboard/services/new"
-              className="rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+              className="ui-btn ui-btn-primary w-full"
             >
               Add service
             </Link>
 
-            <form action={logoutAdmin}>
-              <button
-                type="submit"
-                className="rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
-              >
-                Logout
-              </button>
-            </form>
+            <Link
+              href="/dashboard"
+              className="ui-btn ui-btn-secondary w-full"
+            >
+              Back to dashboard
+            </Link>
           </div>
         </div>
+      </div>
 
-        <div className="mb-6 flex flex-wrap gap-3">
-          <Link
-            href="/dashboard"
-            className="rounded-xl bg-white px-4 py-2 text-sm font-medium text-neutral-700 ring-1 ring-neutral-300 transition hover:bg-neutral-100"
-          >
-            Back to dashboard
-          </Link>
+      <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="ui-stat-card">
+          <p className="text-sm text-neutral-500">Total services</p>
+          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
+            {totalServices}
+          </p>
         </div>
 
-        {services.length === 0 ? (
-          <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-neutral-200">
-            <h2 className="text-lg font-semibold">No services yet</h2>
-            <p className="mt-2 text-sm text-neutral-500">
-              Create your first service so customers can start booking.
+        <div className="ui-stat-card">
+          <p className="text-sm text-neutral-500">Active services</p>
+          <p className="mt-3 text-2xl font-bold tracking-tight text-green-700">
+            {activeServices}
+          </p>
+        </div>
+
+        <div className="ui-stat-card">
+          <p className="text-sm text-neutral-500">Inactive services</p>
+          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
+            {inactiveServices}
+          </p>
+        </div>
+
+        <div className="ui-stat-card">
+          <p className="text-sm text-neutral-500">Total appointments</p>
+          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
+            {totalAppointments}
+          </p>
+        </div>
+      </div>
+
+      {services.length === 0 ? (
+        <div className="ui-card p-8 text-center sm:p-10">
+          <div className="mx-auto max-w-md">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
+              <svg
+                viewBox="0 0 24 24"
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  d="M12 5v14"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M5 12h14"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            <h2 className="mt-4 text-lg font-semibold text-neutral-900">
+              No services yet
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-neutral-500">
+              Create your first service so customers can start booking
+              appointments online.
             </p>
-            <div className="mt-5">
+
+            <div className="mt-6">
               <Link
                 href="/dashboard/services/new"
-                className="inline-flex rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
+                className="ui-btn ui-btn-primary"
               >
                 Add service
               </Link>
             </div>
           </div>
-        ) : (
-          <>
-            <div className="hidden overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-neutral-200 lg:block">
-              <table className="min-w-full text-left">
-                <thead className="bg-neutral-100 text-sm text-neutral-600">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Service</th>
-                    <th className="px-4 py-3 font-medium">Duration</th>
-                    <th className="px-4 py-3 font-medium">Price</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Appointments</th>
-                    <th className="px-4 py-3 font-medium">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {services.map((service) => (
-                    <tr key={service.id} className="border-t border-neutral-200">
-                      <td className="px-4 py-4">
-                        <p className="text-sm font-medium text-neutral-900">
-                          {service.name}
-                        </p>
-                        <p className="mt-1 break-all text-xs text-neutral-500">
-                          {service.id}
-                        </p>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-neutral-700">
-                        {service.durationMin} min
-                      </td>
-                      <td className="px-4 py-4 text-sm text-neutral-700">
-                        ₹{service.price}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                            service.isActive
-                              ? "bg-green-100 text-green-700"
-                              : "bg-neutral-200 text-neutral-700"
-                          }`}
-                        >
-                          {service.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 text-sm text-neutral-700">
-                        {service._count.appointments}
-                      </td>
-                      <td className="px-4 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          <Link
-                            href={`/dashboard/services/${service.id}/edit`}
-                            className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
-                          >
-                            Edit
-                          </Link>
-
-                          <form action={toggleServiceActive}>
-                            <input
-                              type="hidden"
-                              name="serviceId"
-                              value={service.id}
-                            />
-                            <button
-                              type="submit"
-                              className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-700 transition hover:bg-neutral-100"
-                            >
-                              {service.isActive ? "Deactivate" : "Activate"}
-                            </button>
-                          </form>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="grid gap-3 lg:hidden">
-              {services.map((service) => (
-                <div
-                  key={service.id}
-                  className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
+        </div>
+      ) : (
+        <>
+          <div className="hidden overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm lg:block">
+            <table className="min-w-full text-left">
+              <thead className="bg-neutral-50 text-sm text-neutral-600">
+                <tr>
+                  <th className="px-4 py-4 font-medium">Service</th>
+                  <th className="px-4 py-4 font-medium">Duration</th>
+                  <th className="px-4 py-4 font-medium">Price</th>
+                  <th className="px-4 py-4 font-medium">Status</th>
+                  <th className="px-4 py-4 font-medium">Appointments</th>
+                  <th className="px-4 py-4 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {services.map((service) => (
+                  <tr
+                    key={service.id}
+                    className="border-t border-neutral-200 align-top"
+                  >
+                    <td className="px-4 py-4">
                       <p className="text-sm font-semibold text-neutral-900">
                         {service.name}
                       </p>
-                      <p className="mt-1 text-sm text-neutral-600">
-                        {service.durationMin} min · ₹{service.price}
+                      <p className="mt-1 break-all text-xs text-neutral-500">
+                        {service.id}
                       </p>
-                    </div>
+                    </td>
 
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${
-                        service.isActive
-                          ? "bg-green-100 text-green-700"
-                          : "bg-neutral-200 text-neutral-700"
-                      }`}
-                    >
-                      {service.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </div>
+                    <td className="px-4 py-4 text-sm text-neutral-700">
+                      {service.durationMin} min
+                    </td>
 
-                  <div className="mt-4 space-y-1 text-sm text-neutral-600">
-                    <p>
-                      <span className="font-medium text-neutral-800">
-                        Appointments:
-                      </span>{" "}
-                      {service._count.appointments}
-                    </p>
-                    <p className="break-all">
-                      <span className="font-medium text-neutral-800">ID:</span>{" "}
-                      {service.id}
-                    </p>
-                  </div>
+                    <td className="px-4 py-4 text-sm font-medium text-neutral-800">
+                      ₹{service.price}
+                    </td>
 
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <Link
-                      href={`/dashboard/services/${service.id}/edit`}
-                      className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
-                    >
-                      Edit
-                    </Link>
-
-                    <form action={toggleServiceActive}>
-                      <input type="hidden" name="serviceId" value={service.id} />
-                      <button
-                        type="submit"
-                        className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-700 transition hover:bg-neutral-100"
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getServiceStatusClasses(
+                          service.isActive
+                        )}`}
                       >
-                        {service.isActive ? "Deactivate" : "Activate"}
-                      </button>
-                    </form>
+                        {service.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-4 text-sm text-neutral-700">
+                      {service._count.appointments}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        <Link
+                          href={`/dashboard/services/${service.id}/edit`}
+                          className="rounded-xl bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
+                        >
+                          Edit
+                        </Link>
+
+                        <form action={toggleServiceActive}>
+                          <input
+                            type="hidden"
+                            name="serviceId"
+                            value={service.id}
+                          />
+                          <button
+                            type="submit"
+                            className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-700 transition hover:bg-neutral-100"
+                          >
+                            {service.isActive ? "Deactivate" : "Activate"}
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="grid gap-3 lg:hidden">
+            {services.map((service) => (
+              <div key={service.id} className="ui-card p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {service.name}
+                    </p>
+                    <p className="mt-1 text-sm text-neutral-600">
+                      {service.durationMin} min · ₹{service.price}
+                    </p>
                   </div>
+
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getServiceStatusClasses(
+                      service.isActive
+                    )}`}
+                  >
+                    {service.isActive ? "Active" : "Inactive"}
+                  </span>
                 </div>
-              ))}
-            </div>
-          </>
-        )}
-      </section>
-    </main>
+
+                <div className="mt-4 space-y-1 text-sm text-neutral-600">
+                  <p>
+                    <span className="font-medium text-neutral-800">
+                      Appointments:
+                    </span>{" "}
+                    {service._count.appointments}
+                  </p>
+                  <p className="break-all">
+                    <span className="font-medium text-neutral-800">ID:</span>{" "}
+                    {service.id}
+                  </p>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Link
+                    href={`/dashboard/services/${service.id}/edit`}
+                    className="rounded-xl bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
+                  >
+                    Edit
+                  </Link>
+
+                  <form action={toggleServiceActive}>
+                    <input type="hidden" name="serviceId" value={service.id} />
+                    <button
+                      type="submit"
+                      className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-700 transition hover:bg-neutral-100"
+                    >
+                      {service.isActive ? "Deactivate" : "Activate"}
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </section>
   );
 }
