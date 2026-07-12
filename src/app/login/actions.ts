@@ -53,13 +53,7 @@ export async function loginAdmin(
 export async function logoutAdmin() {
   const cookieStore = await cookies();
 
-  cookieStore.set("admin-session", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(0),
-  });
+  cookieStore.delete("admin-session");
 
   redirect("/login");
 }

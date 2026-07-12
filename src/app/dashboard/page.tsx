@@ -2,6 +2,7 @@ import Link from "next/link";
 import { format, subDays } from "date-fns";
 import { prisma } from "@/lib/prisma";
 import { updateAppointmentStatus, deleteAppointment } from "./actions";
+import { logoutAdmin } from "@/app/login/actions";
 import DashboardDateFilter from "@/components/dashboard-date-filter";
 import DeleteAppointmentButton from "@/components/delete-appointment-button";
 
@@ -36,13 +37,13 @@ function getDayRange(dateString: string) {
 function getStatusClasses(status: string) {
   switch (status) {
     case "BOOKED":
-      return "bg-amber-100 text-amber-800 ring-1 ring-amber-200";
+      return "bg-blue-100 text-blue-700";
     case "COMPLETED":
-      return "ui-pill-success ring-1";
+      return "bg-green-100 text-green-700";
     case "CANCELLED":
-      return "ui-pill-danger ring-1";
+      return "bg-red-100 text-red-700";
     default:
-      return "ring-1";
+      return "bg-neutral-100 text-neutral-700";
   }
 }
 
@@ -120,20 +121,11 @@ function StatusFilterLinks({
           <Link
             key={filter.value}
             href={href}
-            className="rounded-full px-4 py-2 text-sm font-medium transition"
-            style={
+            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               isActive
-                ? {
-                    background: "var(--primary)",
-                    color: "var(--primary-foreground)",
-                    boxShadow: "var(--shadow-sm)",
-                  }
-                : {
-                    background: "var(--surface)",
-                    color: "var(--text-muted)",
-                    boxShadow: "inset 0 0 0 1px var(--border)",
-                  }
-            }
+                ? "bg-neutral-900 text-white"
+                : "bg-white text-neutral-700 ring-1 ring-neutral-200 hover:bg-neutral-100"
+            }`}
           >
             {filter.label}
           </Link>
@@ -156,7 +148,7 @@ function SearchForm({
     <form
       action="/dashboard"
       method="GET"
-      className="ui-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center"
+      className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-center"
     >
       <input type="hidden" name="date" value={selectedDate} />
       {selectedStatus !== "ALL" ? (
@@ -168,11 +160,14 @@ function SearchForm({
         name="query"
         defaultValue={searchQuery}
         placeholder="Search customer, phone, or service"
-        className="ui-input"
+        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
       />
 
       <div className="flex gap-2">
-        <button type="submit" className="ui-btn ui-btn-primary">
+        <button
+          type="submit"
+          className="rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800"
+        >
           Search
         </button>
 
@@ -182,7 +177,7 @@ function SearchForm({
             status: selectedStatus,
             page: 1,
           })}
-          className="ui-btn ui-btn-secondary"
+          className="rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
         >
           Clear
         </Link>
@@ -208,41 +203,34 @@ function SummaryCards({
     {
       label: "Total appointments",
       value: totalAppointments,
-      tone: { color: "var(--text)" },
     },
     {
       label: "Booked",
       value: bookedCount,
-      tone: { color: "#9a5b23" },
     },
     {
       label: "Completed",
       value: completedCount,
-      tone: { color: "var(--success)" },
     },
     {
       label: "Cancelled",
       value: cancelledCount,
-      tone: { color: "var(--danger)" },
     },
     {
       label: "Completed revenue",
       value: `₹${completedRevenue}`,
-      tone: { color: "var(--text)" },
     },
   ];
 
   return (
     <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
       {cards.map((card) => (
-        <div key={card.label} className="ui-stat-card">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            {card.label}
-          </p>
-          <p
-            className="mt-3 text-2xl font-bold tracking-tight"
-            style={card.tone}
-          >
+        <div
+          key={card.label}
+          className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-neutral-200"
+        >
+          <p className="text-sm text-neutral-500">{card.label}</p>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-neutral-900">
             {card.value}
           </p>
         </div>
@@ -284,14 +272,12 @@ function AnalyticsCards({
   return (
     <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {cards.map((card) => (
-        <div key={card.label} className="ui-stat-card">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-            {card.label}
-          </p>
-          <p
-            className="mt-3 text-2xl font-bold tracking-tight"
-            style={{ color: "var(--text)" }}
-          >
+        <div
+          key={card.label}
+          className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-neutral-200"
+        >
+          <p className="text-sm text-neutral-500">{card.label}</p>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-neutral-900">
             {card.value}
           </p>
         </div>
@@ -319,7 +305,7 @@ function StatusActionButtons({
       {isBooked ? (
         <Link
           href={`/dashboard/appointments/${appointmentId}/edit?date=${selectedDate}`}
-          className="ui-btn ui-btn-primary !rounded-xl !px-3 !py-2 !text-xs"
+          className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
         >
           Reschedule
         </Link>
@@ -327,11 +313,7 @@ function StatusActionButtons({
         <button
           type="button"
           disabled
-          className="rounded-xl px-3 py-2 text-xs font-medium"
-          style={{
-            background: "var(--surface-soft)",
-            color: "var(--text-soft)",
-          }}
+          className="rounded-lg bg-neutral-200 px-3 py-2 text-xs font-medium text-neutral-500"
         >
           Reschedule
         </button>
@@ -344,10 +326,7 @@ function StatusActionButtons({
         <button
           type="submit"
           disabled={isCompleted || isLocked}
-          className="rounded-xl px-3 py-2 text-xs font-medium text-white transition disabled:cursor-not-allowed"
-          style={{
-            background: isCompleted || isLocked ? "#bdd8b7" : "var(--success)",
-          }}
+          className="rounded-lg bg-green-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-green-200"
         >
           Complete
         </button>
@@ -360,10 +339,7 @@ function StatusActionButtons({
         <button
           type="submit"
           disabled={isCancelled || isLocked}
-          className="rounded-xl px-3 py-2 text-xs font-medium text-white transition disabled:cursor-not-allowed"
-          style={{
-            background: isCancelled || isLocked ? "#e7c4c0" : "var(--danger)",
-          }}
+          className="rounded-lg bg-red-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-200"
         >
           Cancel
         </button>
@@ -396,8 +372,8 @@ function PaginationControls({
   }
 
   return (
-    <div className="ui-card mt-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+    <div className="mt-6 flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm text-neutral-600">
         Page <span className="font-medium">{currentPage}</span> of{" "}
         <span className="font-medium">{totalPages}</span>
       </p>
@@ -411,19 +387,11 @@ function PaginationControls({
             page: currentPage - 1,
           })}
           aria-disabled={currentPage === 1}
-          className="rounded-xl px-4 py-2 text-sm font-medium transition"
-          style={
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
             currentPage === 1
-              ? {
-                  pointerEvents: "none",
-                  background: "var(--surface-soft)",
-                  color: "var(--text-soft)",
-                }
-              : {
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                }
-          }
+              ? "pointer-events-none bg-neutral-100 text-neutral-400"
+              : "bg-neutral-900 text-white hover:bg-neutral-800"
+          }`}
         >
           Previous
         </Link>
@@ -436,19 +404,11 @@ function PaginationControls({
             page: currentPage + 1,
           })}
           aria-disabled={currentPage === totalPages}
-          className="rounded-xl px-4 py-2 text-sm font-medium transition"
-          style={
+          className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
             currentPage === totalPages
-              ? {
-                  pointerEvents: "none",
-                  background: "var(--surface-soft)",
-                  color: "var(--text-soft)",
-                }
-              : {
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                }
-          }
+              ? "pointer-events-none bg-neutral-100 text-neutral-400"
+              : "bg-neutral-900 text-white hover:bg-neutral-800"
+          }`}
         >
           Next
         </Link>
@@ -468,98 +428,57 @@ function TopServicesPanel({
     revenue: number;
   }[];
 }) {
-  const visibleItems = items.slice(0, 5);
-
   return (
-    <div className="ui-card flex h-[430px] min-h-0 flex-col p-0">
-      <div
-        className="flex min-h-[92px] items-start justify-between gap-3 border-b px-6 py-5"
-        style={{ borderColor: "var(--border)" }}
-      >
+    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
+          <h2 className="text-lg font-semibold text-neutral-900">
             Popular services
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+          <p className="mt-1 text-sm text-neutral-500">
             Based on bookings in the last 7 days.
           </p>
         </div>
 
         <Link
           href="/dashboard/services"
-          className="text-sm font-medium underline underline-offset-4"
-          style={{ color: "var(--text-muted)" }}
+          className="text-sm font-medium text-neutral-700 underline underline-offset-4"
         >
           View services
         </Link>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 pr-3">
-        {visibleItems.length === 0 ? (
-          <div
-            className="rounded-2xl border p-5 text-sm"
-            style={{
-              borderStyle: "dashed",
-              borderColor: "var(--border-strong)",
-              background: "var(--surface-muted)",
-              color: "var(--text-muted)",
-            }}
-          >
-            No recent service activity found.
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {visibleItems.map((service, index) => (
-              <div
-                key={service.id}
-                className="rounded-2xl border p-3.5"
-                style={{
-                  borderColor: "var(--border)",
-                  background: "var(--surface-muted)",
-                }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-3">
-                      <span
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold"
-                        style={{
-                          background: "var(--surface)",
-                          color: "var(--text-muted)",
-                          boxShadow: "inset 0 0 0 1px var(--border)",
-                        }}
-                      >
-                        {index + 1}
-                      </span>
-                      <p
-                        className="truncate text-sm font-semibold"
-                        style={{ color: "var(--text)" }}
-                      >
-                        {service.name}
-                      </p>
-                    </div>
-                    <p
-                      className="mt-2 text-sm"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {service.totalBookings} booking
-                      {service.totalBookings === 1 ? "" : "s"} ·{" "}
-                      {service.completedBookings} completed
-                    </p>
-                  </div>
-
-                  <p
-                    className="text-sm font-semibold"
-                    style={{ color: "var(--text)" }}
-                  >
-                    ₹{service.revenue}
+      {items.length === 0 ? (
+        <p className="mt-6 text-sm text-neutral-500">
+          No recent service activity found.
+        </p>
+      ) : (
+        <div className="mt-6 space-y-3">
+          {items.map((service) => (
+            <div
+              key={service.id}
+              className="rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-neutral-900">
+                    {service.name}
+                  </p>
+                  <p className="mt-1 text-sm text-neutral-600">
+                    {service.totalBookings} booking
+                    {service.totalBookings === 1 ? "" : "s"} ·{" "}
+                    {service.completedBookings} completed
                   </p>
                 </div>
+
+                <p className="text-sm font-medium text-neutral-900">
+                  ₹{service.revenue}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -574,63 +493,42 @@ function RevenueBreakdownPanel({
   }[];
 }) {
   return (
-    <div className="ui-card flex h-[430px] min-h-0 flex-col p-0">
-      <div
-        className="flex min-h-[92px] items-start justify-between gap-3 border-b px-6 py-5"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <div>
-          <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
-            Revenue breakdown
-          </h2>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-            Completed appointment revenue over the last 7 days.
-          </p>
-        </div>
-      </div>
+    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+      <h2 className="text-lg font-semibold text-neutral-900">
+        Revenue breakdown
+      </h2>
+      <p className="mt-1 text-sm text-neutral-500">
+        Completed appointment revenue over the last 7 days.
+      </p>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 pr-3">
-        {items.length === 0 ? (
-          <div
-            className="rounded-2xl border p-5 text-sm"
-            style={{
-              borderStyle: "dashed",
-              borderColor: "var(--border-strong)",
-              background: "var(--surface-muted)",
-              color: "var(--text-muted)",
-            }}
-          >
-            No completed appointment revenue found.
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {items.map((item) => (
-              <div
-                key={item.date}
-                className="flex items-center justify-between rounded-2xl border p-3.5"
-                style={{
-                  borderColor: "var(--border)",
-                  background: "var(--surface-muted)",
-                }}
-              >
-                <div>
-                  <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
-                    {item.date}
-                  </p>
-                  <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-                    {item.completedCount} completed appointment
-                    {item.completedCount === 1 ? "" : "s"}
-                  </p>
-                </div>
-
-                <p className="text-sm font-semibold" style={{ color: "var(--text)" }}>
-                  ₹{item.revenue}
+      {items.length === 0 ? (
+        <p className="mt-6 text-sm text-neutral-500">
+          No completed appointment revenue found.
+        </p>
+      ) : (
+        <div className="mt-6 space-y-3">
+          {items.map((item) => (
+            <div
+              key={item.date}
+              className="flex items-center justify-between rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200"
+            >
+              <div>
+                <p className="text-sm font-medium text-neutral-900">
+                  {item.date}
+                </p>
+                <p className="mt-1 text-sm text-neutral-600">
+                  {item.completedCount} completed appointment
+                  {item.completedCount === 1 ? "" : "s"}
                 </p>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+
+              <p className="text-sm font-semibold text-neutral-900">
+                ₹{item.revenue}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -650,91 +548,50 @@ function RecentAppointmentsPanel({
   }[];
 }) {
   return (
-    <div className="ui-card flex h-[430px] min-h-0 flex-col p-0">
-      <div
-        className="flex min-h-[92px] items-start justify-between gap-3 border-b px-6 py-5"
-        style={{ borderColor: "var(--border)" }}
-      >
-        <div>
-          <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
-            Recent appointments
-          </h2>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-            Latest bookings across all dates.
-          </p>
-        </div>
-      </div>
+    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+      <h2 className="text-lg font-semibold text-neutral-900">
+        Recent appointments
+      </h2>
+      <p className="mt-1 text-sm text-neutral-500">
+        Latest bookings across all dates.
+      </p>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 pr-3">
-        {items.length === 0 ? (
-          <div
-            className="rounded-2xl border p-5 text-sm"
-            style={{
-              borderStyle: "dashed",
-              borderColor: "var(--border-strong)",
-              background: "var(--surface-muted)",
-              color: "var(--text-muted)",
-            }}
-          >
-            No appointments found.
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {items.map((appointment) => (
-              <div
-                key={appointment.id}
-                className="rounded-2xl border p-3.5"
-                style={{
-                  borderColor: "var(--border)",
-                  background: "var(--surface-muted)",
-                }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p
-                      className="truncate text-sm font-semibold"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {appointment.customerName}
-                    </p>
-                    <p
-                      className="mt-1 truncate text-sm"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {appointment.service.name} · {appointment.customerPhone}
-                    </p>
-                    <p
-                      className="mt-1 text-sm"
-                      style={{ color: "var(--text-soft)" }}
-                    >
-                      {format(appointment.startTime, "dd MMM yyyy, hh:mm a")}
-                    </p>
-                  </div>
-
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                      appointment.status
-                    )}`}
-                    style={
-                      appointment.status === "BOOKED" ||
-                      appointment.status === "COMPLETED" ||
-                      appointment.status === "CANCELLED"
-                        ? undefined
-                        : {
-                            background: "var(--surface-soft)",
-                            color: "var(--text-muted)",
-                            boxShadow: "inset 0 0 0 1px var(--border)",
-                          }
-                    }
-                  >
-                    {appointment.status}
-                  </span>
+      {items.length === 0 ? (
+        <p className="mt-6 text-sm text-neutral-500">
+          No appointments found.
+        </p>
+      ) : (
+        <div className="mt-6 space-y-3">
+          {items.map((appointment) => (
+            <div
+              key={appointment.id}
+              className="rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-neutral-900">
+                    {appointment.customerName}
+                  </p>
+                  <p className="mt-1 text-sm text-neutral-600">
+                    {appointment.service.name} · {appointment.customerPhone}
+                  </p>
+                  <p className="mt-1 text-sm text-neutral-500">
+                    {format(appointment.startTime, "dd MMM yyyy, hh:mm a")}
+                  </p>
                 </div>
+
+                <span
+                  className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                    appointment.status
+                  )}`}
+                >
+                  {appointment.status}
+                </span>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -941,383 +798,261 @@ export default async function DashboardPage({
   });
 
   return (
-    <section className="p-3 sm:p-4 lg:p-5">
-      <div className="ui-hero-card mb-6 p-6 sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className="ui-pill"
-                style={{
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                }}
-              >
-                Overview
-              </span>
-              <span
-                className="ui-pill"
-                style={{
-                  background: "var(--surface)",
-                  color: "var(--text-muted)",
-                  boxShadow: "inset 0 0 0 1px var(--border)",
-                }}
-              >
-                Daily operations
-              </span>
-            </div>
-
-            <p
-              className="mt-4 text-sm font-medium"
-              style={{ color: "var(--text-muted)" }}
-            >
+    <main className="min-h-screen bg-neutral-50 text-neutral-900">
+      <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mb-6 flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-500">
               Salon dashboard
             </p>
-            <h2
-              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
-              style={{ color: "var(--text)" }}
-            >
+            <h1 className="mt-1 text-3xl font-bold tracking-tight">
               Daily appointments
-            </h2>
-            <p
-              className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Track bookings, monitor revenue, manage services, and take quick
-              actions from one place.
+            </h1>
+            <p className="mt-2 text-sm text-neutral-600">
+              View operations and business insights in one place.
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 lg:min-w-[260px] lg:items-stretch">
+          <div className="flex flex-col gap-3 sm:items-end">
             <DashboardDateFilter selectedDate={selectedDate} />
 
             <Link
               href="/dashboard/services"
-              className="ui-btn ui-btn-primary w-full"
+              className="rounded-xl bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800"
             >
               Manage services
             </Link>
-          </div>
-        </div>
-      </div>
 
-      <SummaryCards
-        totalAppointments={totalAppointments}
-        bookedCount={bookedCount}
-        completedCount={completedCount}
-        cancelledCount={cancelledCount}
-        completedRevenue={completedRevenue}
-      />
-
-      <AnalyticsCards
-        totalServices={totalServices}
-        activeServices={activeServices}
-        weeklyAppointments={weeklyAppointmentsCount}
-        weeklyCompletedRevenue={weeklyCompletedRevenue}
-      />
-
-      <div className="mb-6 grid gap-6 xl:grid-cols-3 xl:items-stretch">
-        <div className="xl:col-span-1">
-          <TopServicesPanel items={topServices} />
-        </div>
-
-        <div className="xl:col-span-1">
-          <RevenueBreakdownPanel items={revenueByDay} />
-        </div>
-
-        <div className="xl:col-span-1">
-          <RecentAppointmentsPanel items={recentAppointments} />
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <SearchForm
-          selectedDate={selectedDate}
-          selectedStatus={selectedStatus}
-          searchQuery={searchQuery}
-        />
-      </div>
-
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm leading-6" style={{ color: "var(--text-muted)" }}>
-          Showing{" "}
-          <span className="font-medium">
-            {totalFilteredAppointments === 0 ? 0 : startIndex + 1}
-          </span>
-          -
-          <span className="font-medium">
-            {Math.min(endIndex, totalFilteredAppointments)}
-          </span>{" "}
-          of <span className="font-medium">{totalFilteredAppointments}</span>{" "}
-          appointment
-          {totalFilteredAppointments === 1 ? "" : "s"} on{" "}
-          <span className="font-medium">{selectedDate}</span>
-          {selectedStatus !== "ALL" ? (
-            <>
-              {" "}
-              ·{" "}
-              <span className="font-medium">
-                {getStatusFilterLabel(selectedStatus)}
-              </span>
-            </>
-          ) : null}
-          {searchQuery ? (
-            <>
-              {" "}
-              · <span className="font-medium">Search:</span> "{searchQuery}"
-            </>
-          ) : null}
-        </p>
-
-        <Link
-          href="/"
-          className="text-sm font-medium underline underline-offset-4"
-          style={{ color: "var(--text-muted)" }}
-        >
-          Back to booking page
-        </Link>
-      </div>
-
-      <div className="mb-6">
-        <StatusFilterLinks
-          selectedDate={selectedDate}
-          selectedStatus={selectedStatus}
-          searchQuery={searchQuery}
-        />
-      </div>
-
-      {appointments.length === 0 ? (
-        <div className="ui-card p-8 text-center sm:p-10">
-          <div className="mx-auto max-w-md">
-            <div
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl"
-              style={{
-                background: "var(--surface-soft)",
-                color: "var(--text-muted)",
-              }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
+            <form action={logoutAdmin}>
+              <button
+                type="submit"
+                className="rounded-xl border border-neutral-300 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
               >
-                <path
-                  d="M8 2v4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M16 2v4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <rect x="3" y="5" width="18" height="16" rx="2" />
-                <path
-                  d="M3 10h18"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-
-            <h2
-              className="mt-4 text-lg font-semibold"
-              style={{ color: "var(--text)" }}
-            >
-              No appointments found
-            </h2>
-            <p
-              className="mt-2 text-sm leading-6"
-              style={{ color: "var(--text-muted)" }}
-            >
-              No bookings match the current date, status, and search filters.
-            </p>
+                Logout
+              </button>
+            </form>
           </div>
         </div>
-      ) : (
-        <>
-          <div
-            className="hidden overflow-hidden rounded-3xl lg:block"
-            style={{
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
-              boxShadow: "var(--shadow-sm)",
-            }}
-          >
-            <table className="min-w-full text-left">
-              <thead
-                className="text-sm"
-                style={{
-                  background: "var(--surface-muted)",
-                  color: "var(--text-muted)",
-                }}
-              >
-                <tr>
-                  <th className="px-4 py-4 font-medium">Time</th>
-                  <th className="px-4 py-4 font-medium">Service</th>
-                  <th className="px-4 py-4 font-medium">Customer</th>
-                  <th className="px-4 py-4 font-medium">Phone</th>
-                  <th className="px-4 py-4 font-medium">Status</th>
-                  <th className="px-4 py-4 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appointment) => (
-                  <tr
-                    key={appointment.id}
-                    className="align-top"
-                    style={{ borderTop: "1px solid var(--border)" }}
-                  >
-                    <td
-                      className="px-4 py-4 text-sm font-medium"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {format(appointment.startTime, "hh:mm a")}
-                    </td>
-                    <td className="px-4 py-4">
-                      <p
-                        className="text-sm font-semibold"
-                        style={{ color: "var(--text)" }}
-                      >
-                        {appointment.service.name}
-                      </p>
-                      <p
-                        className="mt-1 text-xs"
-                        style={{ color: "var(--text-muted)" }}
-                      >
-                        {appointment.service.durationMin} min · ₹
-                        {appointment.service.price}
-                      </p>
-                    </td>
-                    <td
-                      className="px-4 py-4 text-sm"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {appointment.customerName}
-                    </td>
-                    <td
-                      className="px-4 py-4 text-sm"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {appointment.customerPhone}
-                    </td>
-                    <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                          appointment.status
-                        )}`}
-                        style={
-                          appointment.status === "BOOKED"
-                            ? undefined
-                            : appointment.status === "COMPLETED"
-                            ? undefined
-                            : appointment.status === "CANCELLED"
-                            ? undefined
-                            : {
-                                background: "var(--surface-soft)",
-                                color: "var(--text-muted)",
-                                boxShadow: "inset 0 0 0 1px var(--border)",
-                              }
-                        }
-                      >
-                        {appointment.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4">
-                      <StatusActionButtons
-                        appointmentId={appointment.id}
-                        currentStatus={appointment.status}
-                        selectedDate={selectedDate}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+        <SummaryCards
+          totalAppointments={totalAppointments}
+          bookedCount={bookedCount}
+          completedCount={completedCount}
+          cancelledCount={cancelledCount}
+          completedRevenue={completedRevenue}
+        />
+
+        <AnalyticsCards
+          totalServices={totalServices}
+          activeServices={activeServices}
+          weeklyAppointments={weeklyAppointmentsCount}
+          weeklyCompletedRevenue={weeklyCompletedRevenue}
+        />
+
+        <div className="mb-6 grid gap-6 xl:grid-cols-3">
+          <div className="xl:col-span-1">
+            <TopServicesPanel items={topServices} />
           </div>
 
-          <div className="grid gap-3 lg:hidden">
-            {appointments.map((appointment) => (
-              <div key={appointment.id} className="ui-card p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p
-                      className="text-sm font-semibold"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {format(appointment.startTime, "hh:mm a")}
-                    </p>
-                    <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-                      {appointment.service.name}
-                    </p>
-                  </div>
-
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                      appointment.status
-                    )}`}
-                    style={
-                      appointment.status === "BOOKED"
-                        ? undefined
-                        : appointment.status === "COMPLETED"
-                        ? undefined
-                        : appointment.status === "CANCELLED"
-                        ? undefined
-                        : {
-                            background: "var(--surface-soft)",
-                            color: "var(--text-muted)",
-                            boxShadow: "inset 0 0 0 1px var(--border)",
-                          }
-                    }
-                  >
-                    {appointment.status}
-                  </span>
-                </div>
-
-                <div className="mt-4 space-y-1 text-sm" style={{ color: "var(--text-muted)" }}>
-                  <p>
-                    <span className="font-medium" style={{ color: "var(--text)" }}>
-                      Customer:
-                    </span>{" "}
-                    {appointment.customerName}
-                  </p>
-                  <p>
-                    <span className="font-medium" style={{ color: "var(--text)" }}>
-                      Phone:
-                    </span>{" "}
-                    {appointment.customerPhone}
-                  </p>
-                  <p>
-                    <span className="font-medium" style={{ color: "var(--text)" }}>
-                      Details:
-                    </span>{" "}
-                    {appointment.service.durationMin} min · ₹
-                    {appointment.service.price}
-                  </p>
-                </div>
-
-                <div className="mt-4">
-                  <StatusActionButtons
-                    appointmentId={appointment.id}
-                    currentStatus={appointment.status}
-                    selectedDate={selectedDate}
-                  />
-                </div>
-              </div>
-            ))}
+          <div className="xl:col-span-1">
+            <RevenueBreakdownPanel items={revenueByDay} />
           </div>
 
-          <PaginationControls
+          <div className="xl:col-span-1">
+            <RecentAppointmentsPanel items={recentAppointments} />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <SearchForm
             selectedDate={selectedDate}
             selectedStatus={selectedStatus}
             searchQuery={searchQuery}
-            currentPage={safeCurrentPage}
-            totalPages={totalPages}
           />
-        </>
-      )}
-    </section>
+        </div>
+
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-neutral-600">
+            Showing{" "}
+            <span className="font-medium">
+              {totalFilteredAppointments === 0 ? 0 : startIndex + 1}
+            </span>
+            -
+            <span className="font-medium">
+              {Math.min(endIndex, totalFilteredAppointments)}
+            </span>{" "}
+            of <span className="font-medium">{totalFilteredAppointments}</span>{" "}
+            appointment
+            {totalFilteredAppointments === 1 ? "" : "s"} on{" "}
+            <span className="font-medium">{selectedDate}</span>
+            {selectedStatus !== "ALL" ? (
+              <>
+                {" "}
+                ·{" "}
+                <span className="font-medium">
+                  {getStatusFilterLabel(selectedStatus)}
+                </span>
+              </>
+            ) : null}
+            {searchQuery ? (
+              <>
+                {" "}
+                · <span className="font-medium">Search:</span> "{searchQuery}"
+              </>
+            ) : null}
+          </p>
+
+          <Link
+            href="/"
+            className="text-sm font-medium text-neutral-700 underline underline-offset-4"
+          >
+            Back to booking page
+          </Link>
+        </div>
+
+        <div className="mb-6">
+          <StatusFilterLinks
+            selectedDate={selectedDate}
+            selectedStatus={selectedStatus}
+            searchQuery={searchQuery}
+          />
+        </div>
+
+        {appointments.length === 0 ? (
+          <div className="rounded-2xl bg-white p-8 text-center shadow-sm ring-1 ring-neutral-200">
+            <h2 className="text-lg font-semibold">No appointments found</h2>
+            <p className="mt-2 text-sm text-neutral-500">
+              No bookings match the current date, status, and search filters.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="hidden overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-neutral-200 lg:block">
+              <table className="min-w-full text-left">
+                <thead className="bg-neutral-100 text-sm text-neutral-600">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Time</th>
+                    <th className="px-4 py-3 font-medium">Service</th>
+                    <th className="px-4 py-3 font-medium">Customer</th>
+                    <th className="px-4 py-3 font-medium">Phone</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {appointments.map((appointment) => (
+                    <tr
+                      key={appointment.id}
+                      className="border-t border-neutral-200"
+                    >
+                      <td className="px-4 py-4 text-sm text-neutral-700">
+                        {format(appointment.startTime, "hh:mm a")}
+                      </td>
+                      <td className="px-4 py-4">
+                        <p className="text-sm font-medium text-neutral-900">
+                          {appointment.service.name}
+                        </p>
+                        <p className="text-xs text-neutral-500">
+                          {appointment.service.durationMin} min · ₹
+                          {appointment.service.price}
+                        </p>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">
+                        {appointment.customerName}
+                      </td>
+                      <td className="px-4 py-4 text-sm text-neutral-700">
+                        {appointment.customerPhone}
+                      </td>
+                      <td className="px-4 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                            appointment.status
+                          )}`}
+                        >
+                          {appointment.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <StatusActionButtons
+                          appointmentId={appointment.id}
+                          currentStatus={appointment.status}
+                          selectedDate={selectedDate}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid gap-3 lg:hidden">
+              {appointments.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-neutral-200"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-900">
+                        {format(appointment.startTime, "hh:mm a")}
+                      </p>
+                      <p className="mt-1 text-sm text-neutral-600">
+                        {appointment.service.name}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                        appointment.status
+                      )}`}
+                    >
+                      {appointment.status}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 space-y-1 text-sm text-neutral-600">
+                    <p>
+                      <span className="font-medium text-neutral-800">
+                        Customer:
+                      </span>{" "}
+                      {appointment.customerName}
+                    </p>
+                    <p>
+                      <span className="font-medium text-neutral-800">
+                        Phone:
+                      </span>{" "}
+                      {appointment.customerPhone}
+                    </p>
+                    <p>
+                      <span className="font-medium text-neutral-800">
+                        Details:
+                      </span>{" "}
+                      {appointment.service.durationMin} min · ₹
+                      {appointment.service.price}
+                    </p>
+                  </div>
+
+                  <div className="mt-4">
+                    <StatusActionButtons
+                      appointmentId={appointment.id}
+                      currentStatus={appointment.status}
+                      selectedDate={selectedDate}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <PaginationControls
+              selectedDate={selectedDate}
+              selectedStatus={selectedStatus}
+              searchQuery={searchQuery}
+              currentPage={safeCurrentPage}
+              totalPages={totalPages}
+            />
+          </>
+        )}
+      </section>
+    </main>
   );
 }

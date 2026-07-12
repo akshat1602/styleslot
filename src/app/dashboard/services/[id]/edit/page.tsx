@@ -10,12 +10,6 @@ type EditServicePageProps = {
   }>;
 };
 
-function getServiceStatusClasses(isActive: boolean) {
-  return isActive
-    ? "ui-pill-success ring-1"
-    : "ring-1";
-}
-
 export default async function EditServicePage({
   params,
 }: EditServicePageProps) {
@@ -39,247 +33,84 @@ export default async function EditServicePage({
   }
 
   return (
-    <section className="p-3 sm:p-4 lg:p-5">
-      <div className="mx-auto max-w-5xl">
-        <div className="ui-hero-card mb-6 p-6 sm:p-8">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl">
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className="ui-pill"
-                  style={{
-                    background: "var(--primary)",
-                    color: "var(--primary-foreground)",
-                  }}
-                >
-                  Edit service
-                </span>
-                <span
-                  className={`ui-pill ${getServiceStatusClasses(
-                    service.isActive
-                  )}`}
-                  style={
-                    service.isActive
-                      ? undefined
-                      : {
-                          background: "var(--surface-soft)",
-                          color: "var(--text-muted)",
-                          boxShadow: "inset 0 0 0 1px var(--border)",
-                        }
-                  }
-                >
-                  {service.isActive ? "Active" : "Inactive"}
-                </span>
-              </div>
-
-              <p
-                className="mt-4 text-sm font-medium"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Dashboard / Services / Edit
-              </p>
-              <h2
-                className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
-                style={{ color: "var(--text)" }}
-              >
-                {service.name}
-              </h2>
-              <p
-                className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Update the service name, duration, and pricing while keeping
-                the rest of your services workflow consistent.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 lg:min-w-[220px]">
-              <Link
-                href="/dashboard/services"
-                className="ui-btn ui-btn-secondary w-full"
-              >
-                Back to services
-              </Link>
-
-              <Link
-                href="/dashboard"
-                className="ui-btn ui-btn-secondary w-full"
-              >
-                Dashboard home
-              </Link>
-            </div>
-          </div>
+    <main className="min-h-screen bg-neutral-50 text-neutral-900">
+      <section className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+          <p className="text-sm font-medium text-neutral-500">
+            Dashboard / Services / Edit
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight">
+            Edit service
+          </h1>
+          <p className="mt-2 text-sm text-neutral-600">
+            Update the service name, duration, and pricing.
+          </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[320px_1fr] lg:items-start">
-          <aside className="space-y-4 lg:sticky lg:top-6">
-            <div className="ui-card p-5">
-              <h3
-                className="text-sm font-semibold uppercase tracking-[0.16em]"
-                style={{ color: "var(--text-soft)" }}
-              >
-                Current details
-              </h3>
-
-              <div className="mt-5 space-y-4">
-                <div>
-                  <p
-                    className="text-xs font-medium uppercase tracking-[0.14em]"
-                    style={{ color: "var(--text-soft)" }}
-                  >
-                    Service
-                  </p>
-                  <p
-                    className="mt-1 text-sm font-semibold"
-                    style={{ color: "var(--text)" }}
-                  >
-                    {service.name}
-                  </p>
-                </div>
-
-                <div>
-                  <p
-                    className="text-xs font-medium uppercase tracking-[0.14em]"
-                    style={{ color: "var(--text-soft)" }}
-                  >
-                    Status
-                  </p>
-                  <div className="mt-2">
-                    <span
-                      className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getServiceStatusClasses(
-                        service.isActive
-                      )}`}
-                      style={
-                        service.isActive
-                          ? undefined
-                          : {
-                              background: "var(--surface-soft)",
-                              color: "var(--text-muted)",
-                              boxShadow: "inset 0 0 0 1px var(--border)",
-                            }
-                      }
-                    >
-                      {service.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-                  <div>
-                    <p
-                      className="text-xs font-medium uppercase tracking-[0.14em]"
-                      style={{ color: "var(--text-soft)" }}
-                    >
-                      Duration
-                    </p>
-                    <p
-                      className="mt-1 text-sm"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {service.durationMin} min
-                    </p>
-                  </div>
-
-                  <div>
-                    <p
-                      className="text-xs font-medium uppercase tracking-[0.14em]"
-                      style={{ color: "var(--text-soft)" }}
-                    >
-                      Price
-                    </p>
-                    <p
-                      className="mt-1 text-sm"
-                      style={{ color: "var(--text)" }}
-                    >
-                      ₹{service.price}
-                    </p>
-                  </div>
-                </div>
-
-                <div>
-                  <p
-                    className="text-xs font-medium uppercase tracking-[0.14em]"
-                    style={{ color: "var(--text-soft)" }}
-                  >
-                    Appointments
-                  </p>
-                  <p
-                    className="mt-1 text-sm"
-                    style={{ color: "var(--text)" }}
-                  >
-                    {service._count.appointments}
-                  </p>
-                </div>
-
-                <div>
-                  <p
-                    className="text-xs font-medium uppercase tracking-[0.14em]"
-                    style={{ color: "var(--text-soft)" }}
-                  >
-                    Service ID
-                  </p>
-                  <p
-                    className="mt-1 break-all text-sm"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    {service.id}
-                  </p>
-                </div>
-              </div>
+        <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200">
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <p className="text-sm font-medium text-neutral-500">Service</p>
+              <p className="mt-1 text-sm text-neutral-900">{service.name}</p>
             </div>
 
-            <div className="ui-card-soft p-5">
-              <p
-                className="text-sm font-semibold"
-                style={{ color: "var(--text)" }}
-              >
-                Editing notes
-              </p>
-              <div
-                className="mt-3 space-y-2 text-sm leading-6"
-                style={{ color: "var(--text-muted)" }}
-              >
-                <p>
-                  Update values carefully because they affect what customers
-                  see during booking.
-                </p>
-                <p>
-                  If this service should stop appearing on the booking page,
-                  you can deactivate it from the services list.
-                </p>
-              </div>
-            </div>
-          </aside>
-
-          <div className="ui-card p-5 sm:p-6">
-            <div className="mb-6">
-              <h3
-                className="text-xl font-semibold tracking-tight"
-                style={{ color: "var(--text)" }}
-              >
-                Edit details
-              </h3>
-              <p
-                className="mt-2 text-sm leading-6"
-                style={{ color: "var(--text-muted)" }}
-              >
-                Make changes below and save when you are ready.
+            <div>
+              <p className="text-sm font-medium text-neutral-500">Status</p>
+              <p className="mt-1 text-sm text-neutral-900">
+                {service.isActive ? "Active" : "Inactive"}
               </p>
             </div>
 
-            <ServiceForm
-              action={updateService}
-              submitLabel="Save service"
-              initialValues={{
-                id: service.id,
-                name: service.name,
-                durationMin: service.durationMin,
-                price: service.price,
-              }}
-            />
+            <div>
+              <p className="text-sm font-medium text-neutral-500">Duration</p>
+              <p className="mt-1 text-sm text-neutral-900">
+                {service.durationMin} min
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-neutral-500">Price</p>
+              <p className="mt-1 text-sm text-neutral-900">₹{service.price}</p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-neutral-500">
+                Appointments
+              </p>
+              <p className="mt-1 text-sm text-neutral-900">
+                {service._count.appointments}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-neutral-500">Service ID</p>
+              <p className="mt-1 break-all text-sm text-neutral-900">
+                {service.id}
+              </p>
+            </div>
+          </div>
+
+          <ServiceForm
+            action={updateService}
+            submitLabel="Save service"
+            initialValues={{
+              id: service.id,
+              name: service.name,
+              durationMin: service.durationMin,
+              price: service.price,
+            }}
+          />
+
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/dashboard/services"
+              className="rounded-xl bg-white px-5 py-3 text-center text-sm font-medium text-neutral-700 ring-1 ring-neutral-300 transition hover:bg-neutral-100"
+            >
+              Back to services
+            </Link>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   );
 }
