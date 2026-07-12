@@ -29,21 +29,17 @@ export default function ServiceForm({
 }: ServiceFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
 
+  const isEditing = Boolean(initialValues?.id);
+
   return (
-    <form
-      action={formAction}
-      className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200"
-    >
+    <form action={formAction} className="space-y-6">
       {initialValues?.id ? (
         <input type="hidden" name="serviceId" value={initialValues.id} />
       ) : null}
 
-      <div className="space-y-5">
+      <div className="grid gap-5">
         <div>
-          <label
-            htmlFor="name"
-            className="mb-2 block text-sm font-medium text-neutral-700"
-          >
+          <label htmlFor="name" className="ui-label">
             Service name
           </label>
           <input
@@ -52,61 +48,112 @@ export default function ServiceForm({
             type="text"
             defaultValue={initialValues?.name ?? ""}
             placeholder="Haircut"
-            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
+            className="ui-input"
           />
+          <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
+            Choose a short, customer-friendly name that is easy to understand at
+            a glance.
+          </p>
         </div>
 
-        <div>
-          <label
-            htmlFor="durationMin"
-            className="mb-2 block text-sm font-medium text-neutral-700"
-          >
-            Duration in minutes
-          </label>
-          <input
-            id="durationMin"
-            name="durationMin"
-            type="number"
-            min="5"
-            step="5"
-            defaultValue={initialValues?.durationMin ?? 30}
-            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
-          />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="durationMin" className="ui-label">
+              Duration in minutes
+            </label>
+            <input
+              id="durationMin"
+              name="durationMin"
+              type="number"
+              min="5"
+              step="5"
+              defaultValue={initialValues?.durationMin ?? 30}
+              className="ui-input"
+            />
+            <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
+              Use realistic timing so booking slots are generated correctly.
+            </p>
+          </div>
+
+          <div>
+            <label htmlFor="price" className="ui-label">
+              Price
+            </label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min="0"
+              step="1"
+              defaultValue={initialValues?.price ?? 0}
+              className="ui-input"
+            />
+            <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
+              Enter the amount customers should see while booking this service.
+            </p>
+          </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="price"
-            className="mb-2 block text-sm font-medium text-neutral-700"
+        <div
+          className="rounded-2xl border p-4"
+          style={{
+            borderColor: "var(--border)",
+            background: "var(--surface-muted)",
+          }}
+        >
+          <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
+            {isEditing ? "Editing service" : "Before you save"}
+          </p>
+          <p
+            className="mt-2 text-sm leading-6"
+            style={{ color: "var(--text-muted)" }}
           >
-            Price
-          </label>
-          <input
-            id="price"
-            name="price"
-            type="number"
-            min="0"
-            step="1"
-            defaultValue={initialValues?.price ?? 0}
-            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
-          />
+            Double-check the name, duration, and price. These values affect what
+            customers see during booking and what appears in dashboard reports.
+          </p>
         </div>
 
         {state.message ? (
-          <p
-            className={`text-sm ${state.ok ? "text-green-600" : "text-red-600"}`}
+          <div
+            className="rounded-2xl border p-4 text-sm"
+            style={
+              state.ok
+                ? {
+                    borderColor: "#c9dcc4",
+                    background: "var(--success-soft)",
+                    color: "var(--success)",
+                  }
+                : {
+                    borderColor: "#e5c7c2",
+                    background: "var(--danger-soft)",
+                    color: "var(--danger)",
+                  }
+            }
           >
             {state.message}
-          </p>
+          </div>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={pending}
-          className="w-full rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+        <div
+          className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between"
+          style={{ borderTop: "1px solid var(--border)" }}
         >
-          {pending ? "Saving..." : submitLabel}
-        </button>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            {pending
+              ? "Saving your changes..."
+              : isEditing
+              ? "Update the service when you're ready."
+              : "Create the service when you're ready."}
+          </p>
+
+          <button
+            type="submit"
+            disabled={pending}
+            className="ui-btn ui-btn-primary w-full sm:w-auto disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {pending ? "Saving..." : submitLabel}
+          </button>
+        </div>
       </div>
     </form>
   );
