@@ -8,7 +8,7 @@ StyleSlot is a full-stack salon booking web application built with Next.js, Pris
 
 ## Overview
 
-StyleSlot was built as a portfolio-ready full-stack project to demonstrate practical web development skills across public booking workflows, protected admin access, service management, appointment management, database integration, production deployment, and real-world application structure. GitHub portfolio READMEs are strongest when they include a concise overview, a live demo, the main technologies used, and a clear explanation of the problem the project solves. [web:430][web:431]
+StyleSlot was built as a portfolio-ready full-stack project to demonstrate practical web development skills across public booking workflows, protected admin access, service management, appointment management, database integration, production deployment, and real-world application structure. GitHub portfolio READMEs are strongest when they include a concise overview, a live demo, the main technologies used, and a clear explanation of the problem the project solves.
 
 ## Tech Stack
 
