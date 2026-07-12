@@ -12,8 +12,8 @@ type EditServicePageProps = {
 
 function getServiceStatusClasses(isActive: boolean) {
   return isActive
-    ? "bg-green-100 text-green-700 ring-1 ring-green-200"
-    : "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200";
+    ? "ui-pill-success ring-1"
+    : "ring-1";
 }
 
 export default async function EditServicePage({
@@ -41,29 +41,53 @@ export default async function EditServicePage({
   return (
     <section className="p-3 sm:p-4 lg:p-5">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-6 rounded-[28px] border border-neutral-200 bg-white/95 p-6 shadow-sm sm:p-8">
+        <div className="ui-hero-card mb-6 p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="ui-pill bg-neutral-900 text-white">
+                <span
+                  className="ui-pill"
+                  style={{
+                    background: "var(--primary)",
+                    color: "var(--primary-foreground)",
+                  }}
+                >
                   Edit service
                 </span>
                 <span
                   className={`ui-pill ${getServiceStatusClasses(
                     service.isActive
                   )}`}
+                  style={
+                    service.isActive
+                      ? undefined
+                      : {
+                          background: "var(--surface-soft)",
+                          color: "var(--text-muted)",
+                          boxShadow: "inset 0 0 0 1px var(--border)",
+                        }
+                  }
                 >
                   {service.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
 
-              <p className="mt-4 text-sm font-medium text-neutral-500">
+              <p
+                className="mt-4 text-sm font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Dashboard / Services / Edit
               </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+              <h2
+                className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+                style={{ color: "var(--text)" }}
+              >
                 {service.name}
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
+              <p
+                className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Update the service name, duration, and pricing while keeping
                 the rest of your services workflow consistent.
               </p>
@@ -90,22 +114,34 @@ export default async function EditServicePage({
         <div className="grid gap-6 lg:grid-cols-[320px_1fr] lg:items-start">
           <aside className="space-y-4 lg:sticky lg:top-6">
             <div className="ui-card p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              <h3
+                className="text-sm font-semibold uppercase tracking-[0.16em]"
+                style={{ color: "var(--text-soft)" }}
+              >
                 Current details
               </h3>
 
               <div className="mt-5 space-y-4">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Service
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-neutral-900">
+                  <p
+                    className="mt-1 text-sm font-semibold"
+                    style={{ color: "var(--text)" }}
+                  >
                     {service.name}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Status
                   </p>
                   <div className="mt-2">
@@ -113,6 +149,15 @@ export default async function EditServicePage({
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getServiceStatusClasses(
                         service.isActive
                       )}`}
+                      style={
+                        service.isActive
+                          ? undefined
+                          : {
+                              background: "var(--surface-soft)",
+                              color: "var(--text-muted)",
+                              boxShadow: "inset 0 0 0 1px var(--border)",
+                            }
+                      }
                     >
                       {service.isActive ? "Active" : "Inactive"}
                     </span>
@@ -121,38 +166,62 @@ export default async function EditServicePage({
 
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.14em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Duration
                     </p>
-                    <p className="mt-1 text-sm text-neutral-900">
+                    <p
+                      className="mt-1 text-sm"
+                      style={{ color: "var(--text)" }}
+                    >
                       {service.durationMin} min
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.14em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Price
                     </p>
-                    <p className="mt-1 text-sm text-neutral-900">
+                    <p
+                      className="mt-1 text-sm"
+                      style={{ color: "var(--text)" }}
+                    >
                       ₹{service.price}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Appointments
                   </p>
-                  <p className="mt-1 text-sm text-neutral-900">
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--text)" }}
+                  >
                     {service._count.appointments}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Service ID
                   </p>
-                  <p className="mt-1 break-all text-sm text-neutral-600">
+                  <p
+                    className="mt-1 break-all text-sm"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     {service.id}
                   </p>
                 </div>
@@ -160,10 +229,16 @@ export default async function EditServicePage({
             </div>
 
             <div className="ui-card-soft p-5">
-              <p className="text-sm font-semibold text-neutral-900">
+              <p
+                className="text-sm font-semibold"
+                style={{ color: "var(--text)" }}
+              >
                 Editing notes
               </p>
-              <div className="mt-3 space-y-2 text-sm leading-6 text-neutral-600">
+              <div
+                className="mt-3 space-y-2 text-sm leading-6"
+                style={{ color: "var(--text-muted)" }}
+              >
                 <p>
                   Update values carefully because they affect what customers
                   see during booking.
@@ -178,10 +253,16 @@ export default async function EditServicePage({
 
           <div className="ui-card p-5 sm:p-6">
             <div className="mb-6">
-              <h3 className="text-xl font-semibold tracking-tight text-neutral-900">
+              <h3
+                className="text-xl font-semibold tracking-tight"
+                style={{ color: "var(--text)" }}
+              >
                 Edit details
               </h3>
-              <p className="mt-2 text-sm leading-6 text-neutral-500">
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Make changes below and save when you are ready.
               </p>
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { createAppointment } from "@/app/actions/create-appointment";
 import { useRouter } from "next/navigation";
@@ -138,23 +139,55 @@ export default function BookingForm({
           <div className="space-y-6">
             <div className="ui-hero-card overflow-hidden p-6 sm:p-8">
               <div className="flex flex-col gap-6">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="ui-pill bg-neutral-900 text-white">
-                    Online booking
-                  </span>
-                  <span className="ui-pill bg-white text-neutral-600 ring-1 ring-neutral-200">
-                    Fast confirmation
-                  </span>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className="ui-pill"
+                      style={{
+                        background: "var(--primary)",
+                        color: "var(--primary-foreground)",
+                      }}
+                    >
+                      Online booking
+                    </span>
+                    <span
+                      className="ui-pill"
+                      style={{
+                        background: "var(--surface)",
+                        color: "var(--text-muted)",
+                        boxShadow: "inset 0 0 0 1px var(--border)",
+                      }}
+                    >
+                      Fast confirmation
+                    </span>
+                  </div>
+
+                  <Link
+                    href="/dashboard"
+                    className="shrink-0 text-sm font-medium underline underline-offset-4"
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Staff login
+                  </Link>
                 </div>
 
                 <div>
-                  <p className="text-sm font-medium text-neutral-500">
+                  <p
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     Book your appointment
                   </p>
-                  <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
+                  <h1
+                    className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl"
+                    style={{ color: "var(--text)" }}
+                  >
                     {salonName}
                   </h1>
-                  <p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
+                  <p
+                    className="mt-4 max-w-2xl text-sm leading-6 sm:text-base"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     Choose your service, pick a date, and reserve a time slot in
                     a few steps. The booking flow is designed to stay quick,
                     clear, and mobile-friendly.
@@ -163,28 +196,46 @@ export default function BookingForm({
 
                 <div className="grid gap-3 sm:grid-cols-3">
                   <div className="ui-card-soft p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Address
                     </p>
-                    <p className="mt-2 text-sm font-medium text-neutral-900">
+                    <p
+                      className="mt-2 text-sm font-medium"
+                      style={{ color: "var(--text)" }}
+                    >
                       {address || "Address not added yet"}
                     </p>
                   </div>
 
                   <div className="ui-card-soft p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Working hours
                     </p>
-                    <p className="mt-2 text-sm font-medium text-neutral-900">
+                    <p
+                      className="mt-2 text-sm font-medium"
+                      style={{ color: "var(--text)" }}
+                    >
                       {openTime} to {closeTime}
                     </p>
                   </div>
 
                   <div className="ui-card-soft p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Active services
                     </p>
-                    <p className="mt-2 text-sm font-medium text-neutral-900">
+                    <p
+                      className="mt-2 text-sm font-medium"
+                      style={{ color: "var(--text)" }}
+                    >
                       {services.length} available
                     </p>
                   </div>
@@ -195,16 +246,25 @@ export default function BookingForm({
             <div className="ui-card p-5 sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-neutral-900 sm:text-xl">
+                  <h2
+                    className="text-lg font-semibold sm:text-xl"
+                    style={{ color: "var(--text)" }}
+                  >
                     Service summary
                   </h2>
-                  <p className="mt-1 text-sm text-neutral-500">
+                  <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
                     Review what you&apos;re booking before confirming.
                   </p>
                 </div>
 
                 {selectedService ? (
-                  <span className="ui-pill bg-neutral-100 text-neutral-700">
+                  <span
+                    className="ui-pill"
+                    style={{
+                      background: "var(--surface-soft)",
+                      color: "var(--text-muted)",
+                    }}
+                  >
                     ₹{selectedService.price}
                   </span>
                 ) : null}
@@ -212,35 +272,81 @@ export default function BookingForm({
 
               {selectedService ? (
                 <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                  <div
+                    className="rounded-2xl border p-4"
+                    style={{
+                      borderColor: "var(--border)",
+                      background: "var(--surface-muted)",
+                    }}
+                  >
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Service
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-neutral-900">
+                    <p
+                      className="mt-2 text-sm font-semibold"
+                      style={{ color: "var(--text)" }}
+                    >
                       {selectedService.name}
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                  <div
+                    className="rounded-2xl border p-4"
+                    style={{
+                      borderColor: "var(--border)",
+                      background: "var(--surface-muted)",
+                    }}
+                  >
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Duration
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-neutral-900">
+                    <p
+                      className="mt-2 text-sm font-semibold"
+                      style={{ color: "var(--text)" }}
+                    >
                       {selectedService.durationMin} min
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                  <div
+                    className="rounded-2xl border p-4"
+                    style={{
+                      borderColor: "var(--border)",
+                      background: "var(--surface-muted)",
+                    }}
+                  >
+                    <p
+                      className="text-xs font-medium uppercase tracking-[0.16em]"
+                      style={{ color: "var(--text-soft)" }}
+                    >
                       Slot
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-neutral-900">
-                      {selectedSlot ? `${selectedDate} · ${selectedSlot}` : "Not selected"}
+                    <p
+                      className="mt-2 text-sm font-semibold"
+                      style={{ color: "var(--text)" }}
+                    >
+                      {selectedSlot
+                        ? `${selectedDate} · ${selectedSlot}`
+                        : "Not selected"}
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="mt-5 rounded-2xl border border-dashed border-neutral-300 bg-neutral-50 p-5 text-sm text-neutral-500">
+                <div
+                  className="mt-5 rounded-2xl border p-5 text-sm"
+                  style={{
+                    borderStyle: "dashed",
+                    borderColor: "var(--border-strong)",
+                    background: "var(--surface-muted)",
+                    color: "var(--text-muted)",
+                  }}
+                >
                   Select a service to see booking details.
                 </div>
               )}
@@ -249,10 +355,16 @@ export default function BookingForm({
 
           <div className="ui-card p-5 sm:p-6 lg:sticky lg:top-6">
             <div className="mb-6">
-              <h2 className="text-xl font-semibold tracking-tight text-neutral-900">
+              <h2
+                className="text-xl font-semibold tracking-tight"
+                style={{ color: "var(--text)" }}
+              >
                 Complete your booking
               </h2>
-              <p className="mt-2 text-sm leading-6 text-neutral-500">
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Pick a service, select a date, choose an available slot, and add
                 your contact details.
               </p>
@@ -272,7 +384,8 @@ export default function BookingForm({
                 >
                   {services.map((service) => (
                     <option key={service.id} value={service.id}>
-                      {service.name} — {service.durationMin} min — ₹{service.price}
+                      {service.name} — {service.durationMin} min — ₹
+                      {service.price}
                     </option>
                   ))}
                 </select>
@@ -295,34 +408,64 @@ export default function BookingForm({
 
               <div>
                 <div className="mb-2 flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-neutral-700">
+                  <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>
                     Available slots
                   </p>
                   {selectedSlot ? (
-                    <span className="ui-pill bg-neutral-900 text-white">
+                    <span
+                      className="ui-pill"
+                      style={{
+                        background: "var(--primary)",
+                        color: "var(--primary-foreground)",
+                      }}
+                    >
                       {selectedSlot}
                     </span>
                   ) : null}
                 </div>
 
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
+                <div
+                  className="rounded-2xl border p-4"
+                  style={{
+                    borderColor: "var(--border)",
+                    background: "var(--surface-muted)",
+                  }}
+                >
                   {slotsLoading ? (
                     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                       {Array.from({ length: 6 }).map((_, index) => (
                         <div
                           key={index}
-                          className="h-11 animate-pulse rounded-xl bg-neutral-200"
+                          className="h-11 animate-pulse rounded-xl"
+                          style={{ background: "var(--surface-soft)" }}
                         />
                       ))}
                     </div>
                   ) : slotsError ? (
-                    <div className="rounded-2xl border border-red-200 bg-red-50 p-4">
-                      <p className="text-sm font-medium text-red-700">
+                    <div
+                      className="rounded-2xl border p-4"
+                      style={{
+                        borderColor: "#e5c7c2",
+                        background: "var(--danger-soft)",
+                      }}
+                    >
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "var(--danger)" }}
+                      >
                         {slotsError}
                       </p>
                     </div>
                   ) : slots.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-neutral-300 bg-white p-5 text-sm text-neutral-500">
+                    <div
+                      className="rounded-2xl border p-5 text-sm"
+                      style={{
+                        borderStyle: "dashed",
+                        borderColor: "var(--border-strong)",
+                        background: "var(--surface)",
+                        color: "var(--text-muted)",
+                      }}
+                    >
                       No slots available for this date. Try another date or
                       service.
                     </div>
@@ -336,11 +479,21 @@ export default function BookingForm({
                             key={slot}
                             type="button"
                             onClick={() => setSelectedSlot(slot)}
-                            className={`rounded-2xl border px-3 py-3 text-sm font-medium transition ${
+                            className="rounded-2xl border px-3 py-3 text-sm font-medium transition"
+                            style={
                               isSelected
-                                ? "border-neutral-900 bg-neutral-900 text-white shadow-sm"
-                                : "border-neutral-200 bg-white text-neutral-700 hover:border-neutral-400 hover:bg-neutral-100"
-                            }`}
+                                ? {
+                                    borderColor: "var(--primary)",
+                                    background: "var(--primary)",
+                                    color: "var(--primary-foreground)",
+                                    boxShadow: "var(--shadow-sm)",
+                                  }
+                                : {
+                                    borderColor: "var(--border)",
+                                    background: "var(--surface)",
+                                    color: "var(--text-muted)",
+                                  }
+                            }
                           >
                             {slot}
                           </button>
@@ -384,11 +537,17 @@ export default function BookingForm({
               </div>
 
               {selectedService ? (
-                <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-                  <p className="text-sm font-medium text-neutral-800">
+                <div
+                  className="rounded-2xl border p-4"
+                  style={{
+                    borderColor: "var(--border)",
+                    background: "var(--surface-muted)",
+                  }}
+                >
+                  <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
                     Booking details
                   </p>
-                  <div className="mt-2 space-y-1 text-sm text-neutral-600">
+                  <div className="mt-2 space-y-1 text-sm" style={{ color: "var(--text-muted)" }}>
                     <p>
                       {selectedService.name} · {selectedService.durationMin} min · ₹
                       {selectedService.price}
@@ -404,11 +563,20 @@ export default function BookingForm({
 
               {state.message ? (
                 <div
-                  className={`rounded-2xl border p-4 text-sm ${
+                  className="rounded-2xl border p-4 text-sm"
+                  style={
                     state.ok
-                      ? "border-green-200 bg-green-50 text-green-700"
-                      : "border-red-200 bg-red-50 text-red-700"
-                  }`}
+                      ? {
+                          borderColor: "#c9dcc4",
+                          background: "var(--success-soft)",
+                          color: "var(--success)",
+                        }
+                      : {
+                          borderColor: "#e5c7c2",
+                          background: "var(--danger-soft)",
+                          color: "var(--danger)",
+                        }
+                  }
                 >
                   {state.message}
                 </div>

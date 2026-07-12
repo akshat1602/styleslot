@@ -50,7 +50,7 @@ export default function ServiceForm({
             placeholder="Haircut"
             className="ui-input"
           />
-          <p className="mt-2 text-xs leading-5 text-neutral-500">
+          <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
             Choose a short, customer-friendly name that is easy to understand at
             a glance.
           </p>
@@ -70,7 +70,7 @@ export default function ServiceForm({
               defaultValue={initialValues?.durationMin ?? 30}
               className="ui-input"
             />
-            <p className="mt-2 text-xs leading-5 text-neutral-500">
+            <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
               Use realistic timing so booking slots are generated correctly.
             </p>
           </div>
@@ -88,17 +88,26 @@ export default function ServiceForm({
               defaultValue={initialValues?.price ?? 0}
               className="ui-input"
             />
-            <p className="mt-2 text-xs leading-5 text-neutral-500">
+            <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
               Enter the amount customers should see while booking this service.
             </p>
           </div>
         </div>
 
-        <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-          <p className="text-sm font-medium text-neutral-900">
+        <div
+          className="rounded-2xl border p-4"
+          style={{
+            borderColor: "var(--border)",
+            background: "var(--surface-muted)",
+          }}
+        >
+          <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
             {isEditing ? "Editing service" : "Before you save"}
           </p>
-          <p className="mt-2 text-sm leading-6 text-neutral-600">
+          <p
+            className="mt-2 text-sm leading-6"
+            style={{ color: "var(--text-muted)" }}
+          >
             Double-check the name, duration, and price. These values affect what
             customers see during booking and what appears in dashboard reports.
           </p>
@@ -106,18 +115,30 @@ export default function ServiceForm({
 
         {state.message ? (
           <div
-            className={`rounded-2xl border p-4 text-sm ${
+            className="rounded-2xl border p-4 text-sm"
+            style={
               state.ok
-                ? "border-green-200 bg-green-50 text-green-700"
-                : "border-red-200 bg-red-50 text-red-700"
-            }`}
+                ? {
+                    borderColor: "#c9dcc4",
+                    background: "var(--success-soft)",
+                    color: "var(--success)",
+                  }
+                : {
+                    borderColor: "#e5c7c2",
+                    background: "var(--danger-soft)",
+                    color: "var(--danger)",
+                  }
+            }
           >
             {state.message}
           </div>
         ) : null}
 
-        <div className="flex flex-col gap-3 border-t border-neutral-200 pt-2 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-neutral-500">
+        <div
+          className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between"
+          style={{ borderTop: "1px solid var(--border)" }}
+        >
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
             {pending
               ? "Saving your changes..."
               : isEditing
