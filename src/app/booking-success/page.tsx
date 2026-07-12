@@ -23,7 +23,14 @@ export default async function BookingSuccessPage({
         <div className="mx-auto max-w-3xl">
           <div className="ui-hero-card overflow-hidden p-8 sm:p-10">
             <div className="flex flex-col gap-6">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100 text-green-700 shadow-sm">
+              <div
+                className="flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm"
+                style={{
+                  background: "var(--success-soft)",
+                  color: "var(--success)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+              >
                 <svg
                   viewBox="0 0 24 24"
                   className="h-7 w-7"
@@ -40,13 +47,22 @@ export default async function BookingSuccessPage({
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-green-700">
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "var(--success)" }}
+                >
                   Booking confirmed
                 </p>
-                <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+                <h1
+                  className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+                  style={{ color: "var(--text)" }}
+                >
                   Appointment booked successfully
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
+                <p
+                  className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
+                  style={{ color: "var(--text-muted)" }}
+                >
                   {name
                     ? `${name}, your appointment has been scheduled successfully.`
                     : "Your appointment has been scheduled successfully."}{" "}
@@ -56,38 +72,65 @@ export default async function BookingSuccessPage({
 
               <div className="grid gap-4 sm:grid-cols-3">
                 <div className="ui-card-soft p-5">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Service
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-neutral-900">
+                  <p
+                    className="mt-2 text-sm font-semibold"
+                    style={{ color: "var(--text)" }}
+                  >
                     {service || "Not available"}
                   </p>
                 </div>
 
                 <div className="ui-card-soft p-5">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Date
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-neutral-900">
+                  <p
+                    className="mt-2 text-sm font-semibold"
+                    style={{ color: "var(--text)" }}
+                  >
                     {date || "Not available"}
                   </p>
                 </div>
 
                 <div className="ui-card-soft p-5">
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Time
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-neutral-900">
+                  <p
+                    className="mt-2 text-sm font-semibold"
+                    style={{ color: "var(--text)" }}
+                  >
                     {slot || "Not available"}
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-neutral-200 bg-white/70 p-5">
-                <p className="text-sm font-medium text-neutral-900">
+              <div
+                className="rounded-2xl p-5"
+                style={{
+                  border: "1px solid var(--border)",
+                  background: "rgba(255, 249, 245, 0.78)",
+                }}
+              >
+                <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
                   What happens next
                 </p>
-                <p className="mt-2 text-sm leading-6 text-neutral-600">
+                <p
+                  className="mt-2 text-sm leading-6"
+                  style={{ color: "var(--text-muted)" }}
+                >
                   Arrive a few minutes early for your appointment. If you need to
                   make changes, the salon admin can manage bookings from the
                   dashboard.

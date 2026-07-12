@@ -4,8 +4,8 @@ import { toggleServiceActive } from "./actions";
 
 function getServiceStatusClasses(isActive: boolean) {
   return isActive
-    ? "bg-green-100 text-green-700 ring-1 ring-green-200"
-    : "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200";
+    ? "ui-pill-success ring-1"
+    : "ring-1";
 }
 
 export default async function ServicesPage() {
@@ -37,25 +37,47 @@ export default async function ServicesPage() {
 
   return (
     <section className="p-3 sm:p-4 lg:p-5">
-      <div className="mb-6 rounded-[28px] border border-neutral-200 bg-white/95 p-6 shadow-sm sm:p-8">
+      <div className="ui-hero-card mb-6 p-6 sm:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="ui-pill bg-neutral-900 text-white">
+              <span
+                className="ui-pill"
+                style={{
+                  background: "var(--primary)",
+                  color: "var(--primary-foreground)",
+                }}
+              >
                 Services
               </span>
-              <span className="ui-pill bg-white text-neutral-600 ring-1 ring-neutral-200">
+              <span
+                className="ui-pill"
+                style={{
+                  background: "var(--surface)",
+                  color: "var(--text-muted)",
+                  boxShadow: "inset 0 0 0 1px var(--border)",
+                }}
+              >
                 Dashboard management
               </span>
             </div>
 
-            <p className="mt-4 text-sm font-medium text-neutral-500">
+            <p
+              className="mt-4 text-sm font-medium"
+              style={{ color: "var(--text-muted)" }}
+            >
               Dashboard / Services
             </p>
-            <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+            <h2
+              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+              style={{ color: "var(--text)" }}
+            >
               Manage services
             </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
+            <p
+              className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
+              style={{ color: "var(--text-muted)" }}
+            >
               Add, edit, and control which services are available for booking.
               Keep offerings organized and easy to manage.
             </p>
@@ -81,29 +103,49 @@ export default async function ServicesPage() {
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <div className="ui-stat-card">
-          <p className="text-sm text-neutral-500">Total services</p>
-          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            Total services
+          </p>
+          <p
+            className="mt-3 text-2xl font-bold tracking-tight"
+            style={{ color: "var(--text)" }}
+          >
             {totalServices}
           </p>
         </div>
 
         <div className="ui-stat-card">
-          <p className="text-sm text-neutral-500">Active services</p>
-          <p className="mt-3 text-2xl font-bold tracking-tight text-green-700">
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            Active services
+          </p>
+          <p
+            className="mt-3 text-2xl font-bold tracking-tight"
+            style={{ color: "var(--success)" }}
+          >
             {activeServices}
           </p>
         </div>
 
         <div className="ui-stat-card">
-          <p className="text-sm text-neutral-500">Inactive services</p>
-          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            Inactive services
+          </p>
+          <p
+            className="mt-3 text-2xl font-bold tracking-tight"
+            style={{ color: "var(--text)" }}
+          >
             {inactiveServices}
           </p>
         </div>
 
         <div className="ui-stat-card">
-          <p className="text-sm text-neutral-500">Total appointments</p>
-          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900">
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+            Total appointments
+          </p>
+          <p
+            className="mt-3 text-2xl font-bold tracking-tight"
+            style={{ color: "var(--text)" }}
+          >
             {totalAppointments}
           </p>
         </div>
@@ -112,7 +154,13 @@ export default async function ServicesPage() {
       {services.length === 0 ? (
         <div className="ui-card p-8 text-center sm:p-10">
           <div className="mx-auto max-w-md">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500">
+            <div
+              className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl"
+              style={{
+                background: "var(--surface-soft)",
+                color: "var(--text-muted)",
+              }}
+            >
               <svg
                 viewBox="0 0 24 24"
                 className="h-6 w-6"
@@ -133,10 +181,16 @@ export default async function ServicesPage() {
               </svg>
             </div>
 
-            <h2 className="mt-4 text-lg font-semibold text-neutral-900">
+            <h2
+              className="mt-4 text-lg font-semibold"
+              style={{ color: "var(--text)" }}
+            >
               No services yet
             </h2>
-            <p className="mt-2 text-sm leading-6 text-neutral-500">
+            <p
+              className="mt-2 text-sm leading-6"
+              style={{ color: "var(--text-muted)" }}
+            >
               Create your first service so customers can start booking
               appointments online.
             </p>
@@ -153,9 +207,22 @@ export default async function ServicesPage() {
         </div>
       ) : (
         <>
-          <div className="hidden overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm lg:block">
+          <div
+            className="hidden overflow-hidden rounded-3xl lg:block"
+            style={{
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+              boxShadow: "var(--shadow-sm)",
+            }}
+          >
             <table className="min-w-full text-left">
-              <thead className="bg-neutral-50 text-sm text-neutral-600">
+              <thead
+                className="text-sm"
+                style={{
+                  background: "var(--surface-muted)",
+                  color: "var(--text-muted)",
+                }}
+              >
                 <tr>
                   <th className="px-4 py-4 font-medium">Service</th>
                   <th className="px-4 py-4 font-medium">Duration</th>
@@ -169,22 +236,35 @@ export default async function ServicesPage() {
                 {services.map((service) => (
                   <tr
                     key={service.id}
-                    className="border-t border-neutral-200 align-top"
+                    className="align-top"
+                    style={{ borderTop: "1px solid var(--border)" }}
                   >
                     <td className="px-4 py-4">
-                      <p className="text-sm font-semibold text-neutral-900">
+                      <p
+                        className="text-sm font-semibold"
+                        style={{ color: "var(--text)" }}
+                      >
                         {service.name}
                       </p>
-                      <p className="mt-1 break-all text-xs text-neutral-500">
+                      <p
+                        className="mt-1 break-all text-xs"
+                        style={{ color: "var(--text-soft)" }}
+                      >
                         {service.id}
                       </p>
                     </td>
 
-                    <td className="px-4 py-4 text-sm text-neutral-700">
+                    <td
+                      className="px-4 py-4 text-sm"
+                      style={{ color: "var(--text-muted)" }}
+                    >
                       {service.durationMin} min
                     </td>
 
-                    <td className="px-4 py-4 text-sm font-medium text-neutral-800">
+                    <td
+                      className="px-4 py-4 text-sm font-medium"
+                      style={{ color: "var(--text)" }}
+                    >
                       ₹{service.price}
                     </td>
 
@@ -193,12 +273,24 @@ export default async function ServicesPage() {
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getServiceStatusClasses(
                           service.isActive
                         )}`}
+                        style={
+                          service.isActive
+                            ? undefined
+                            : {
+                                background: "var(--surface-soft)",
+                                color: "var(--text-muted)",
+                                boxShadow: "inset 0 0 0 1px var(--border)",
+                              }
+                        }
                       >
                         {service.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
 
-                    <td className="px-4 py-4 text-sm text-neutral-700">
+                    <td
+                      className="px-4 py-4 text-sm"
+                      style={{ color: "var(--text-muted)" }}
+                    >
                       {service._count.appointments}
                     </td>
 
@@ -206,7 +298,7 @@ export default async function ServicesPage() {
                       <div className="flex flex-wrap gap-2">
                         <Link
                           href={`/dashboard/services/${service.id}/edit`}
-                          className="rounded-xl bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
+                          className="ui-btn ui-btn-primary !rounded-xl !px-3 !py-2 !text-xs"
                         >
                           Edit
                         </Link>
@@ -219,7 +311,12 @@ export default async function ServicesPage() {
                           />
                           <button
                             type="submit"
-                            className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-700 transition hover:bg-neutral-100"
+                            className="rounded-xl px-3 py-2 text-xs font-medium transition"
+                            style={{
+                              border: "1px solid var(--border-strong)",
+                              background: "var(--surface)",
+                              color: "var(--text-muted)",
+                            }}
                           >
                             {service.isActive ? "Deactivate" : "Activate"}
                           </button>
@@ -237,10 +334,13 @@ export default async function ServicesPage() {
               <div key={service.id} className="ui-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-neutral-900">
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: "var(--text)" }}
+                    >
                       {service.name}
                     </p>
-                    <p className="mt-1 text-sm text-neutral-600">
+                    <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
                       {service.durationMin} min · ₹{service.price}
                     </p>
                   </div>
@@ -249,20 +349,31 @@ export default async function ServicesPage() {
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getServiceStatusClasses(
                       service.isActive
                     )}`}
+                    style={
+                      service.isActive
+                        ? undefined
+                        : {
+                            background: "var(--surface-soft)",
+                            color: "var(--text-muted)",
+                            boxShadow: "inset 0 0 0 1px var(--border)",
+                          }
+                    }
                   >
                     {service.isActive ? "Active" : "Inactive"}
                   </span>
                 </div>
 
-                <div className="mt-4 space-y-1 text-sm text-neutral-600">
+                <div className="mt-4 space-y-1 text-sm" style={{ color: "var(--text-muted)" }}>
                   <p>
-                    <span className="font-medium text-neutral-800">
+                    <span className="font-medium" style={{ color: "var(--text)" }}>
                       Appointments:
                     </span>{" "}
                     {service._count.appointments}
                   </p>
                   <p className="break-all">
-                    <span className="font-medium text-neutral-800">ID:</span>{" "}
+                    <span className="font-medium" style={{ color: "var(--text)" }}>
+                      ID:
+                    </span>{" "}
                     {service.id}
                   </p>
                 </div>
@@ -270,7 +381,7 @@ export default async function ServicesPage() {
                 <div className="mt-4 flex flex-wrap gap-2">
                   <Link
                     href={`/dashboard/services/${service.id}/edit`}
-                    className="rounded-xl bg-neutral-900 px-3 py-2 text-xs font-medium text-white transition hover:bg-neutral-800"
+                    className="ui-btn ui-btn-primary !rounded-xl !px-3 !py-2 !text-xs"
                   >
                     Edit
                   </Link>
@@ -279,7 +390,12 @@ export default async function ServicesPage() {
                     <input type="hidden" name="serviceId" value={service.id} />
                     <button
                       type="submit"
-                      className="rounded-xl border border-neutral-300 bg-white px-3 py-2 text-xs font-medium text-neutral-700 transition hover:bg-neutral-100"
+                      className="rounded-xl px-3 py-2 text-xs font-medium transition"
+                      style={{
+                        border: "1px solid var(--border-strong)",
+                        background: "var(--surface)",
+                        color: "var(--text-muted)",
+                      }}
                     >
                       {service.isActive ? "Deactivate" : "Activate"}
                     </button>

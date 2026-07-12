@@ -30,13 +30,13 @@ function formatTimeInput(date: Date) {
 function getStatusClasses(status: string) {
   switch (status) {
     case "BOOKED":
-      return "bg-blue-100 text-blue-700 ring-1 ring-blue-200";
+      return "bg-amber-100 text-amber-800 ring-1 ring-amber-200";
     case "COMPLETED":
-      return "bg-green-100 text-green-700 ring-1 ring-green-200";
+      return "ui-pill-success ring-1";
     case "CANCELLED":
-      return "bg-red-100 text-red-700 ring-1 ring-red-200";
+      return "ui-pill-danger ring-1";
     default:
-      return "bg-neutral-100 text-neutral-700 ring-1 ring-neutral-200";
+      return "ring-1";
   }
 }
 
@@ -88,27 +88,53 @@ export default async function EditAppointmentPage({
   return (
     <section className="p-3 sm:p-4 lg:p-5">
       <div className="mx-auto max-w-5xl">
-        <div className="mb-6 rounded-[28px] border border-neutral-200 bg-white/95 p-6 shadow-sm sm:p-8">
+        <div className="ui-hero-card mb-6 p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="ui-pill bg-neutral-900 text-white">
+                <span
+                  className="ui-pill"
+                  style={{
+                    background: "var(--primary)",
+                    color: "var(--primary-foreground)",
+                  }}
+                >
                   Edit appointment
                 </span>
                 <span
                   className={`ui-pill ${getStatusClasses(appointment.status)}`}
+                  style={
+                    appointment.status === "BOOKED" ||
+                    appointment.status === "COMPLETED" ||
+                    appointment.status === "CANCELLED"
+                      ? undefined
+                      : {
+                          background: "var(--surface-soft)",
+                          color: "var(--text-muted)",
+                          boxShadow: "inset 0 0 0 1px var(--border)",
+                        }
+                  }
                 >
                   {appointment.status}
                 </span>
               </div>
 
-              <p className="mt-4 text-sm font-medium text-neutral-500">
+              <p
+                className="mt-4 text-sm font-medium"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Dashboard / Appointments / Edit
               </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
+              <h2
+                className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+                style={{ color: "var(--text)" }}
+              >
                 {appointment.customerName}
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-600 sm:text-base">
+              <p
+                className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Update the booked service, date, or time while keeping the
                 appointment record accurate.
               </p>
@@ -135,51 +161,81 @@ export default async function EditAppointmentPage({
         <div className="grid gap-6 lg:grid-cols-[320px_1fr] lg:items-start">
           <aside className="space-y-4 lg:sticky lg:top-6">
             <div className="ui-card p-5">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              <h3
+                className="text-sm font-semibold uppercase tracking-[0.16em]"
+                style={{ color: "var(--text-soft)" }}
+              >
                 Current details
               </h3>
 
               <div className="mt-5 space-y-4">
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Customer
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-neutral-900">
+                  <p
+                    className="mt-1 text-sm font-semibold"
+                    style={{ color: "var(--text)" }}
+                  >
                     {appointment.customerName}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Phone
                   </p>
-                  <p className="mt-1 text-sm text-neutral-900">
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--text)" }}
+                  >
                     {appointment.customerPhone}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Current service
                   </p>
-                  <p className="mt-1 text-sm text-neutral-900">
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--text)" }}
+                  >
                     {appointment.service.name} · {appointment.service.durationMin} min
                     · ₹{appointment.service.price}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Current schedule
                   </p>
-                  <p className="mt-1 text-sm text-neutral-900">
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--text)" }}
+                  >
                     {formatDateInput(appointment.appointmentDate)} at{" "}
                     {formatTimeInput(appointment.startTime)}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Status
                   </p>
                   <div className="mt-2">
@@ -187,6 +243,17 @@ export default async function EditAppointmentPage({
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
                         appointment.status
                       )}`}
+                      style={
+                        appointment.status === "BOOKED" ||
+                        appointment.status === "COMPLETED" ||
+                        appointment.status === "CANCELLED"
+                          ? undefined
+                          : {
+                              background: "var(--surface-soft)",
+                              color: "var(--text-muted)",
+                              boxShadow: "inset 0 0 0 1px var(--border)",
+                            }
+                      }
                     >
                       {appointment.status}
                     </span>
@@ -194,10 +261,16 @@ export default async function EditAppointmentPage({
                 </div>
 
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.14em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
                     Appointment ID
                   </p>
-                  <p className="mt-1 break-all text-sm text-neutral-600">
+                  <p
+                    className="mt-1 break-all text-sm"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     {appointment.id}
                   </p>
                 </div>
@@ -205,10 +278,16 @@ export default async function EditAppointmentPage({
             </div>
 
             <div className="ui-card-soft p-5">
-              <p className="text-sm font-semibold text-neutral-900">
+              <p
+                className="text-sm font-semibold"
+                style={{ color: "var(--text)" }}
+              >
                 Rescheduling notes
               </p>
-              <div className="mt-3 space-y-2 text-sm leading-6 text-neutral-600">
+              <div
+                className="mt-3 space-y-2 text-sm leading-6"
+                style={{ color: "var(--text-muted)" }}
+              >
                 <p>
                   Choose an active service and an available time slot that fits
                   the selected service duration.
@@ -223,10 +302,16 @@ export default async function EditAppointmentPage({
 
           <div className="ui-card p-5 sm:p-6">
             <div className="mb-6">
-              <h3 className="text-xl font-semibold tracking-tight text-neutral-900">
+              <h3
+                className="text-xl font-semibold tracking-tight"
+                style={{ color: "var(--text)" }}
+              >
                 Edit details
               </h3>
-              <p className="mt-2 text-sm leading-6 text-neutral-500">
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: "var(--text-muted)" }}
+              >
                 Make changes below and save when you are ready.
               </p>
             </div>

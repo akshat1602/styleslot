@@ -35,11 +35,20 @@ export default function DashboardNavLinks() {
           <Link
             key={item.href}
             href={item.href}
-            className={`ui-btn ${
+            className="ui-btn"
+            style={
               isActive
-                ? "bg-neutral-900 text-white hover:bg-neutral-800"
-                : "ui-btn-secondary"
-            }`}
+                ? {
+                    background: "var(--primary)",
+                    color: "var(--primary-foreground)",
+                    boxShadow: "var(--shadow-sm)",
+                  }
+                : {
+                    background: "rgba(255, 250, 247, 0.96)",
+                    color: "var(--text-muted)",
+                    border: "1px solid var(--border-strong)",
+                  }
+            }
           >
             {item.label}
           </Link>

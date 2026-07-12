@@ -120,10 +120,7 @@ export default function EditAppointmentForm({
   }, [selectedServiceId, selectedDate, initialDate, initialServiceId, initialTime]);
 
   return (
-    <form
-      action={formAction}
-      className="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-neutral-200"
-    >
+    <form action={formAction} className="ui-card mt-6 p-6">
       <input type="hidden" name="appointmentId" value={appointmentId} />
       <input type="hidden" name="customerName" value={customerName} />
       <input type="hidden" name="customerPhone" value={customerPhone} />
@@ -131,10 +128,7 @@ export default function EditAppointmentForm({
 
       <div className="space-y-5">
         <div>
-          <label
-            htmlFor="serviceId"
-            className="mb-2 block text-sm font-medium text-neutral-700"
-          >
+          <label htmlFor="serviceId" className="ui-label">
             Select service
           </label>
           <select
@@ -142,7 +136,7 @@ export default function EditAppointmentForm({
             name="serviceId"
             value={selectedServiceId}
             onChange={(e) => setSelectedServiceId(e.target.value)}
-            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
+            className="ui-input"
           >
             {services.map((service) => (
               <option key={service.id} value={service.id}>
@@ -153,10 +147,7 @@ export default function EditAppointmentForm({
         </div>
 
         <div>
-          <label
-            htmlFor="appointmentDate"
-            className="mb-2 block text-sm font-medium text-neutral-700"
-          >
+          <label htmlFor="appointmentDate" className="ui-label">
             Select date
           </label>
           <input
@@ -165,39 +156,55 @@ export default function EditAppointmentForm({
             type="date"
             value={selectedDate}
             onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-sm outline-none focus:border-neutral-500"
+            className="ui-input"
           />
         </div>
 
         <div>
-          <p className="mb-2 block text-sm font-medium text-neutral-700">
-            Available slots
-          </p>
+          <p className="ui-label mb-2">Available slots</p>
 
           {slotsLoading ? (
-            <p className="text-sm text-neutral-500">Loading slots...</p>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+              Loading slots...
+            </p>
           ) : slotsError ? (
-            <p className="text-sm text-red-600">{slotsError}</p>
+            <p className="text-sm" style={{ color: "var(--danger)" }}>
+              {slotsError}
+            </p>
           ) : slots.length === 0 ? (
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
               No slots available for this date.
             </p>
           ) : (
             <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-              {slots.map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => setSelectedSlot(slot)}
-                  className={`rounded-lg border px-3 py-2 text-sm font-medium ${
-                    selectedSlot === slot
-                      ? "border-neutral-900 bg-neutral-900 text-white"
-                      : "border-neutral-300 bg-white text-neutral-700"
-                  }`}
-                >
-                  {slot}
-                </button>
-              ))}
+              {slots.map((slot) => {
+                const isSelected = selectedSlot === slot;
+
+                return (
+                  <button
+                    key={slot}
+                    type="button"
+                    onClick={() => setSelectedSlot(slot)}
+                    className="rounded-xl px-3 py-2 text-sm font-medium transition"
+                    style={
+                      isSelected
+                        ? {
+                            background: "var(--primary)",
+                            color: "var(--primary-foreground)",
+                            border: "1px solid var(--primary)",
+                            boxShadow: "var(--shadow-sm)",
+                          }
+                        : {
+                            background: "var(--surface)",
+                            color: "var(--text-muted)",
+                            border: "1px solid var(--border-strong)",
+                          }
+                    }
+                  >
+                    {slot}
+                  </button>
+                );
+              })}
             </div>
           )}
 
@@ -205,16 +212,22 @@ export default function EditAppointmentForm({
         </div>
 
         {selectedService ? (
-          <div className="rounded-xl bg-neutral-50 p-4 ring-1 ring-neutral-200">
-            <p className="text-sm font-medium text-neutral-800">
+          <div
+            className="rounded-2xl p-4"
+            style={{
+              background: "var(--surface-muted)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
               Updated appointment preview
             </p>
-            <p className="mt-1 text-sm text-neutral-600">
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
               {selectedService.name} · {selectedService.durationMin} min · ₹
               {selectedService.price}
             </p>
             {selectedSlot ? (
-              <p className="mt-1 text-sm text-neutral-600">
+              <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
                 New slot: {selectedDate} at {selectedSlot}
               </p>
             ) : null}
@@ -222,19 +235,30 @@ export default function EditAppointmentForm({
         ) : null}
 
         {state.message ? (
-          <p
-            className={`text-sm ${
-              state.ok ? "text-green-600" : "text-red-600"
-            }`}
+          <div
+            className="rounded-2xl border p-4 text-sm"
+            style={
+              state.ok
+                ? {
+                    borderColor: "#c9dcc4",
+                    background: "var(--success-soft)",
+                    color: "var(--success)",
+                  }
+                : {
+                    borderColor: "#e5c7c2",
+                    background: "var(--danger-soft)",
+                    color: "var(--danger)",
+                  }
+            }
           >
             {state.message}
-          </p>
+          </div>
         ) : null}
 
         <button
           type="submit"
           disabled={pending || !selectedSlot}
-          className="w-full rounded-xl bg-neutral-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:bg-neutral-300"
+          className="ui-btn ui-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save reschedule"}
         </button>
