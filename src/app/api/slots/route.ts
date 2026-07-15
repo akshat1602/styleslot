@@ -10,6 +10,10 @@ function getLocalDateOnly(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+function getCurrentLocalMinutes(date: Date) {
+  return date.getHours() * 60 + date.getMinutes();
+}
+
 function combineDateAndMinutes(dateString: string, totalMinutes: number) {
   const [year, month, day] = dateString.split("-").map(Number);
   const hours = Math.floor(totalMinutes / 60);
@@ -68,6 +72,21 @@ export async function GET(request: NextRequest) {
   const duration = service.durationMin;
   const slotStep = 15;
 
+  const now = new Date();
+  const isToday = requestedDate.getTime() === today.getTime();
+  const currentMinutes = getCurrentLocalMinutes(now);
+
+  if (isToday && currentMinutes >= closeMinutes) {
+    return NextResponse.json({
+      date,
+      serviceId,
+      serviceDuration: service.durationMin,
+      openTime: settings.openTime,
+      closeTime: settings.closeTime,
+      availableSlots: [],
+    });
+  }
+
   const startOfDay = new Date(`${date}T00:00:00`);
   const endOfDay = new Date(`${date}T23:59:59.999`);
 
@@ -99,9 +118,6 @@ export async function GET(request: NextRequest) {
       endMinutes: end.getHours() * 60 + end.getMinutes(),
     };
   });
-
-  const now = new Date();
-  const isToday = requestedDate.getTime() === today.getTime();
 
   const availableSlots: string[] = [];
 
