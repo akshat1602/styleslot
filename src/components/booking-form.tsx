@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { createAppointment } from "@/app/actions/create-appointment";
 import { useRouter } from "next/navigation";
@@ -139,7 +138,7 @@ export default function BookingForm({
           <div className="space-y-6">
             <div className="ui-hero-card overflow-hidden p-6 sm:p-8">
               <div className="flex flex-col gap-6">
-                <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
                       className="ui-pill"
@@ -161,14 +160,6 @@ export default function BookingForm({
                       Fast confirmation
                     </span>
                   </div>
-
-                  <Link
-                    href="/dashboard"
-                    className="shrink-0 text-sm font-medium underline underline-offset-4"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    Staff login
-                  </Link>
                 </div>
 
                 <div>
@@ -252,7 +243,10 @@ export default function BookingForm({
                   >
                     Service summary
                   </h2>
-                  <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     Review what you&apos;re booking before confirming.
                   </p>
                 </div>
@@ -408,7 +402,10 @@ export default function BookingForm({
 
               <div>
                 <div className="mb-2 flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium" style={{ color: "var(--text-muted)" }}>
+                  <p
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     Available slots
                   </p>
                   {selectedSlot ? (
@@ -544,13 +541,19 @@ export default function BookingForm({
                     background: "var(--surface-muted)",
                   }}
                 >
-                  <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
+                  <p
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text)" }}
+                  >
                     Booking details
                   </p>
-                  <div className="mt-2 space-y-1 text-sm" style={{ color: "var(--text-muted)" }}>
+                  <div
+                    className="mt-2 space-y-1 text-sm"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     <p>
-                      {selectedService.name} · {selectedService.durationMin} min · ₹
-                      {selectedService.price}
+                      {selectedService.name} · {selectedService.durationMin} min
+                      · ₹{selectedService.price}
                     </p>
                     <p>
                       {selectedSlot
