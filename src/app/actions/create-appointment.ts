@@ -4,9 +4,16 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-type CreateAppointmentState = {
+export type CreateAppointmentState = {
   ok: boolean;
   message: string;
+  fieldErrors?: {
+    serviceId?: string[];
+    appointmentDate?: string[];
+    selectedSlot?: string[];
+    customerName?: string[];
+    customerPhone?: string[];
+  };
 };
 
 const createAppointmentSchema = z.object({
@@ -66,18 +73,20 @@ export async function createAppointment(
   const parsed = createAppointmentSchema.safeParse(raw);
 
   if (!parsed.success) {
-    const firstError = Object.values(parsed.error.flatten().fieldErrors)[0]?.[0];
-
     return {
       ok: false,
-      message: firstError ?? "Please check your form details.",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: parsed.error.flatten().fieldErrors,
     };
   }
 
   if (isPastDate(parsed.data.appointmentDate)) {
     return {
       ok: false,
-      message: "You cannot book an appointment for a past date.",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: {
+        appointmentDate: ["You cannot book an appointment for a past date."],
+      },
     };
   }
 
@@ -93,7 +102,10 @@ export async function createAppointment(
   if (!service || !service.isActive) {
     return {
       ok: false,
-      message: "Selected service is not available.",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: {
+        serviceId: ["Selected service is not available."],
+      },
     };
   }
 
@@ -105,7 +117,10 @@ export async function createAppointment(
   if (Number.isNaN(startTime.getTime())) {
     return {
       ok: false,
-      message: "Invalid appointment time selected.",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: {
+        selectedSlot: ["Invalid appointment time selected."],
+      },
     };
   }
 
@@ -114,7 +129,10 @@ export async function createAppointment(
   if (startTime <= now) {
     return {
       ok: false,
-      message: "You cannot book a past time slot.",
+      message: "Please correct the highlighted fields.",
+      fieldErrors: {
+        selectedSlot: ["You cannot book a past time slot."],
+      },
     };
   }
 
@@ -147,6 +165,9 @@ export async function createAppointment(
     return {
       ok: false,
       message: "This slot has just been booked. Please choose another time.",
+      fieldErrors: {
+        selectedSlot: ["This slot has just been booked. Please choose another time."],
+      },
     };
   }
 
@@ -169,5 +190,6 @@ export async function createAppointment(
   return {
     ok: true,
     message: "Appointment booked successfully.",
+    fieldErrors: {},
   };
 }
