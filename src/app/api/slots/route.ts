@@ -6,6 +6,11 @@ import {
   timeStringToMinutes,
 } from "@/lib/slots";
 
+function parseLocalDate(dateString: string) {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+}
+
 function getLocalDateOnly(date: Date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
@@ -35,7 +40,7 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const requestedDate = new Date(`${date}T00:00:00`);
+  const requestedDate = parseLocalDate(date);
 
   if (Number.isNaN(requestedDate.getTime())) {
     return NextResponse.json({ error: "Invalid date" }, { status: 400 });
@@ -43,7 +48,7 @@ export async function GET(request: NextRequest) {
 
   const today = getLocalDateOnly(new Date());
 
-  if (requestedDate < today) {
+  if (requestedDate.getTime() < today.getTime()) {
     return NextResponse.json({
       date,
       serviceId,
@@ -87,8 +92,16 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const startOfDay = new Date(`${date}T00:00:00`);
-  const endOfDay = new Date(`${date}T23:59:59.999`);
+  const startOfDay = parseLocalDate(date);
+  const endOfDay = new Date(
+    startOfDay.getFullYear(),
+    startOfDay.getMonth(),
+    startOfDay.getDate(),
+    23,
+    59,
+    59,
+    999
+  );
 
   const appointments = await prisma.appointment.findMany({
     where: {
@@ -128,6 +141,16 @@ export async function GET(request: NextRequest) {
   ) {
     const slotEnd = slotStart + duration;
 
+    if (slotEnd > closeMinutes) {
+      continue;
+    }
+
+    if (isToday) {
+      if (slotStart <= currentMinutes) {
+        continue;
+      }
+    }
+
     const hasConflict = bookedRanges.some((booking) =>
       rangesOverlap(
         slotStart,
@@ -139,14 +162,6 @@ export async function GET(request: NextRequest) {
 
     if (hasConflict) {
       continue;
-    }
-
-    if (isToday) {
-      const slotStartDate = combineDateAndMinutes(date, slotStart);
-
-      if (slotStartDate <= now) {
-        continue;
-      }
     }
 
     availableSlots.push(minutesToTimeString(slotStart));
