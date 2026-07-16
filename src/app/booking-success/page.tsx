@@ -131,19 +131,14 @@ export default async function BookingSuccessPage({
                   className="mt-2 text-sm leading-6"
                   style={{ color: "var(--text-muted)" }}
                 >
-                  Arrive a few minutes early for your appointment. If you need to
-                  make changes, the salon admin can manage bookings from the
-                  dashboard.
+                  Arrive a few minutes early for your appointment and keep this
+                  booking date and time handy for a smooth visit.
                 </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row">
                 <a href="/" className="ui-btn ui-btn-primary">
                   Book another appointment
-                </a>
-
-                <a href="/dashboard" className="ui-btn ui-btn-secondary">
-                  View dashboard
                 </a>
               </div>
             </div>
