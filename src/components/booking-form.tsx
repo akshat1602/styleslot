@@ -6,6 +6,7 @@ import {
   type CreateAppointmentState,
 } from "@/app/actions/create-appointment";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "@/components/theme-toggle";
 
 type ServiceItem = {
   id: string;
@@ -101,8 +102,18 @@ export default function BookingForm({
   }, [currentStep]);
 
   const progressPercent = useMemo(() => {
-    return currentStep * 20;
-  }, [currentStep]);
+    if (!selectedServiceId) return 0;
+    if (!selectedDate) return 25;
+    if (!selectedSlot) return 50;
+    if (!customerName.trim() || !customerPhone.trim()) return 75;
+    return 100;
+  }, [
+    selectedServiceId,
+    selectedDate,
+    selectedSlot,
+    customerName,
+    customerPhone,
+  ]);
 
   const serviceError = state.fieldErrors?.serviceId?.[0];
   const dateError = state.fieldErrors?.appointmentDate?.[0];
@@ -185,98 +196,100 @@ export default function BookingForm({
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start xl:grid-cols-[0.88fr_1.12fr]">
           <div className="space-y-6">
             <div className="ui-hero-card overflow-hidden p-6 sm:p-8">
-              <div className="flex flex-col gap-6">
-                <div className="flex items-start gap-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span
-                      className="ui-pill"
-                      style={{
-                        background: "var(--primary)",
-                        color: "var(--primary-foreground)",
-                      }}
-                    >
-                      Online booking
-                    </span>
-                    <span
-                      className="ui-pill"
-                      style={{
-                        background: "var(--surface)",
-                        color: "var(--text-muted)",
-                        boxShadow: "inset 0 0 0 1px var(--border)",
-                      }}
-                    >
-                      Fast confirmation
-                    </span>
-                  </div>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2 pr-3">
+                  <span
+                    className="ui-pill"
+                    style={{
+                      background: "var(--primary)",
+                      color: "var(--primary-foreground)",
+                    }}
+                  >
+                    Online booking
+                  </span>
+                  <span
+                    className="ui-pill"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--text-muted)",
+                      boxShadow: "inset 0 0 0 1px var(--border)",
+                    }}
+                  >
+                    Fast confirmation
+                  </span>
                 </div>
 
-                <div>
+                <div className="shrink-0 self-start">
+                  <ThemeToggle />
+                </div>
+              </div>
+
+              <div className="mt-6">
+                <p
+                  className="text-sm font-medium"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Book your appointment
+                </p>
+                <h1
+                  className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl"
+                  style={{ color: "var(--text)" }}
+                >
+                  {salonName}
+                </h1>
+                <p
+                  className="mt-4 max-w-2xl text-sm leading-6 sm:text-base"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Choose a service, pick a date, and reserve your slot in a
+                  few simple steps.
+                </p>
+              </div>
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                <div className="ui-card-soft p-4">
                   <p
-                    className="text-sm font-medium"
-                    style={{ color: "var(--text-muted)" }}
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
                   >
-                    Book your appointment
+                    Address
                   </p>
-                  <h1
-                    className="mt-2 text-3xl font-bold tracking-tight sm:text-5xl"
+                  <p
+                    className="mt-2 text-sm font-medium"
                     style={{ color: "var(--text)" }}
                   >
-                    {salonName}
-                  </h1>
-                  <p
-                    className="mt-4 max-w-2xl text-sm leading-6 sm:text-base"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    Choose a service, pick a date, and reserve your slot in a
-                    few simple steps.
+                    {address || "Address not added yet"}
                   </p>
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <div className="ui-card-soft p-4">
-                    <p
-                      className="text-xs font-medium uppercase tracking-[0.16em]"
-                      style={{ color: "var(--text-soft)" }}
-                    >
-                      Address
-                    </p>
-                    <p
-                      className="mt-2 text-sm font-medium"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {address || "Address not added yet"}
-                    </p>
-                  </div>
+                <div className="ui-card-soft p-4">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
+                    Working hours
+                  </p>
+                  <p
+                    className="mt-2 text-sm font-medium"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {openTime} to {closeTime}
+                  </p>
+                </div>
 
-                  <div className="ui-card-soft p-4">
-                    <p
-                      className="text-xs font-medium uppercase tracking-[0.16em]"
-                      style={{ color: "var(--text-soft)" }}
-                    >
-                      Working hours
-                    </p>
-                    <p
-                      className="mt-2 text-sm font-medium"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {openTime} to {closeTime}
-                    </p>
-                  </div>
-
-                  <div className="ui-card-soft p-4">
-                    <p
-                      className="text-xs font-medium uppercase tracking-[0.16em]"
-                      style={{ color: "var(--text-soft)" }}
-                    >
-                      Active services
-                    </p>
-                    <p
-                      className="mt-2 text-sm font-medium"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {services.length} available
-                    </p>
-                  </div>
+                <div className="ui-card-soft p-4">
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
+                    Active services
+                  </p>
+                  <p
+                    className="mt-2 text-sm font-medium"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {services.length} available
+                  </p>
                 </div>
               </div>
             </div>
@@ -361,9 +374,7 @@ export default function BookingForm({
                     className="mt-2 text-base font-bold leading-6"
                     style={{ color: "var(--text)" }}
                   >
-                    {selectedService
-                      ? `₹${selectedService.price}`
-                      : "Not selected"}
+                    {selectedService ? `₹${selectedService.price}` : "Not selected"}
                   </p>
                 </div>
 
@@ -611,9 +622,7 @@ export default function BookingForm({
                     onChange={(e) => setSelectedServiceId(e.target.value)}
                     className="ui-input"
                     aria-invalid={serviceError ? "true" : "false"}
-                    aria-describedby={
-                      serviceError ? "service-error" : undefined
-                    }
+                    aria-describedby={serviceError ? "service-error" : undefined}
                   >
                     <option value="">Choose a service</option>
                     {services.map((service) => (

@@ -35,6 +35,36 @@
   --radius-xl: 2rem;
 }
 
+[data-theme="dark"] {
+  --background: #171311;
+  --foreground: #f3e8df;
+
+  --surface: #211b18;
+  --surface-muted: #2a221f;
+  --surface-soft: #332925;
+
+  --border: #3f312b;
+  --border-strong: #5a463d;
+
+  --text: #f3e8df;
+  --text-muted: #c4ada1;
+  --text-soft: #8d7468;
+
+  --primary: #d07a55;
+  --primary-hover: #b96643;
+  --primary-foreground: #fff8f3;
+
+  --success: #8eb287;
+  --success-soft: rgba(142, 178, 135, 0.16);
+
+  --danger: #d58880;
+  --danger-soft: rgba(213, 136, 128, 0.16);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -59,8 +89,19 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+[data-theme="dark"] body {
+  background:
+    radial-gradient(circle at top, rgba(208, 122, 85, 0.08), transparent 30%),
+    linear-gradient(to bottom, #1b1614, #171311 42%, #120f0d);
+}
+
 ::selection {
   background: rgba(184, 92, 56, 0.18);
+  color: var(--text);
+}
+
+[data-theme="dark"] ::selection {
+  background: rgba(208, 122, 85, 0.28);
   color: var(--text);
 }
 
@@ -98,6 +139,10 @@ textarea::placeholder {
   box-shadow: 0 0 0 4px rgba(184, 92, 56, 0.14);
 }
 
+[data-theme="dark"] :focus-visible {
+  box-shadow: 0 0 0 4px rgba(208, 122, 85, 0.2);
+}
+
 .ui-shell {
   min-height: 100vh;
   color: var(--text);
@@ -118,6 +163,14 @@ textarea::placeholder {
   @apply rounded-[28px];
 }
 
+[data-theme="dark"] .ui-hero-card {
+  background: linear-gradient(
+    135deg,
+    rgba(33, 27, 24, 0.98),
+    rgba(42, 34, 31, 0.96)
+  );
+}
+
 .ui-card {
   background: rgba(255, 249, 245, 0.96);
   border: 1px solid var(--border);
@@ -125,10 +178,18 @@ textarea::placeholder {
   @apply rounded-3xl;
 }
 
+[data-theme="dark"] .ui-card {
+  background: rgba(33, 27, 24, 0.94);
+}
+
 .ui-card-soft {
   background: rgba(252, 246, 241, 0.92);
   border: 1px solid var(--border);
   @apply rounded-2xl;
+}
+
+[data-theme="dark"] .ui-card-soft {
+  background: rgba(42, 34, 31, 0.9);
 }
 
 .ui-section-title {
@@ -154,8 +215,17 @@ textarea::placeholder {
   @apply w-full rounded-2xl px-4 py-3.5 text-sm outline-none;
 }
 
+[data-theme="dark"] .ui-input {
+  background: rgba(26, 22, 20, 0.95);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.02);
+}
+
 .ui-input:hover {
   border-color: #c8ae9a;
+}
+
+[data-theme="dark"] .ui-input:hover {
+  border-color: #7a5d50;
 }
 
 .ui-input:focus {
@@ -163,6 +233,12 @@ textarea::placeholder {
   box-shadow:
     0 0 0 4px rgba(184, 92, 56, 0.14),
     inset 0 1px 2px rgba(61, 37, 24, 0.03);
+}
+
+[data-theme="dark"] .ui-input:focus {
+  box-shadow:
+    0 0 0 4px rgba(208, 122, 85, 0.18),
+    inset 0 1px 2px rgba(255, 255, 255, 0.02);
 }
 
 .ui-btn {
@@ -185,8 +261,16 @@ textarea::placeholder {
   border: 1px solid var(--border-strong);
 }
 
+[data-theme="dark"] .ui-btn-secondary {
+  background: rgba(42, 34, 31, 0.96);
+}
+
 .ui-btn-secondary:hover {
   background: #f8efe8;
+}
+
+[data-theme="dark"] .ui-btn-secondary:hover {
+  background: #332925;
 }
 
 .ui-btn-ghost {
@@ -195,6 +279,10 @@ textarea::placeholder {
 
 .ui-btn-ghost:hover {
   background: rgba(184, 92, 56, 0.06);
+}
+
+[data-theme="dark"] .ui-btn-ghost:hover {
+  background: rgba(208, 122, 85, 0.1);
 }
 
 .ui-pill {
@@ -216,6 +304,10 @@ textarea::placeholder {
   border: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   @apply rounded-3xl p-5;
+}
+
+[data-theme="dark"] .ui-stat-card {
+  background: linear-gradient(180deg, #241d1a, #1d1715);
 }
 
 .ui-divider {
