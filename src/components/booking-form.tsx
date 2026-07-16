@@ -61,12 +61,12 @@ export default function BookingForm({
 
   const [state, formAction, pending] = useActionState(
     createAppointment,
-    initialState
+    initialState,
   );
 
   const selectedService = useMemo(
     () => services.find((service) => service.id === selectedServiceId),
-    [services, selectedServiceId]
+    [services, selectedServiceId],
   );
 
   const currentStep = useMemo(() => {
@@ -75,7 +75,13 @@ export default function BookingForm({
     if (!selectedSlot) return 2;
     if (!customerName.trim() || !customerPhone.trim()) return 3;
     return 4;
-  }, [selectedServiceId, selectedDate, selectedSlot, customerName, customerPhone]);
+  }, [
+    selectedServiceId,
+    selectedDate,
+    selectedSlot,
+    customerName,
+    customerPhone,
+  ]);
 
   const currentStepLabel = useMemo(() => {
     switch (currentStep) {
@@ -119,7 +125,7 @@ export default function BookingForm({
 
       try {
         const res = await fetch(
-          `/api/slots?serviceId=${selectedServiceId}&date=${selectedDate}`
+          `/api/slots?serviceId=${selectedServiceId}&date=${selectedDate}`,
         );
 
         const data = await res.json();
@@ -291,19 +297,9 @@ export default function BookingForm({
                     Review your booking details here.
                   </p>
                 </div>
-
-                <span
-                  className="ui-pill"
-                  style={{
-                    background: "var(--surface-soft)",
-                    color: "var(--text-muted)",
-                  }}
-                >
-                  {selectedService ? `₹${selectedService.price}` : "Not selected"}
-                </span>
               </div>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div
                   className="flex h-full flex-col items-center rounded-2xl border p-4 text-center"
                   style={{
@@ -342,7 +338,32 @@ export default function BookingForm({
                     className="mt-2 text-sm font-semibold leading-6"
                     style={{ color: "var(--text)" }}
                   >
-                    {selectedService ? `${selectedService.durationMin} min` : "Select service first"}
+                    {selectedService
+                      ? `${selectedService.durationMin} min`
+                      : "Select service first"}
+                  </p>
+                </div>
+
+                <div
+                  className="flex h-full flex-col items-center rounded-2xl border p-4 text-center"
+                  style={{
+                    borderColor: "var(--border)",
+                    background: "var(--surface-muted)",
+                  }}
+                >
+                  <p
+                    className="text-xs font-medium uppercase tracking-[0.16em]"
+                    style={{ color: "var(--text-soft)" }}
+                  >
+                    Price
+                  </p>
+                  <p
+                    className="mt-2 text-base font-bold leading-6"
+                    style={{ color: "var(--text)" }}
+                  >
+                    {selectedService
+                      ? `₹${selectedService.price}`
+                      : "Not selected"}
                   </p>
                 </div>
 
@@ -487,7 +508,8 @@ export default function BookingForm({
                       className="mt-1 text-sm font-medium"
                       style={{ color: "var(--text)" }}
                     >
-                      Step {Math.min(currentStep + 1, 5)} of 5 · {currentStepLabel}
+                      Step {Math.min(currentStep + 1, 5)} of 5 ·{" "}
+                      {currentStepLabel}
                     </p>
                   </div>
 
@@ -589,12 +611,15 @@ export default function BookingForm({
                     onChange={(e) => setSelectedServiceId(e.target.value)}
                     className="ui-input"
                     aria-invalid={serviceError ? "true" : "false"}
-                    aria-describedby={serviceError ? "service-error" : undefined}
+                    aria-describedby={
+                      serviceError ? "service-error" : undefined
+                    }
                   >
                     <option value="">Choose a service</option>
                     {services.map((service) => (
                       <option key={service.id} value={service.id}>
-                        {service.name} — {service.durationMin} min — ₹{service.price}
+                        {service.name} — {service.durationMin} min — ₹
+                        {service.price}
                       </option>
                     ))}
                   </select>
@@ -713,7 +738,9 @@ export default function BookingForm({
                     <span
                       className="ui-pill"
                       style={{
-                        background: selectedSlot ? "var(--primary)" : "var(--surface)",
+                        background: selectedSlot
+                          ? "var(--primary)"
+                          : "var(--surface)",
                         color: selectedSlot
                           ? "var(--primary-foreground)"
                           : "var(--text-muted)",
@@ -730,7 +757,9 @@ export default function BookingForm({
                     className="rounded-2xl border p-4"
                     style={{
                       borderColor:
-                        slotError || slotsError ? "var(--danger)" : "var(--border)",
+                        slotError || slotsError
+                          ? "var(--danger)"
+                          : "var(--border)",
                       background: "var(--surface-muted)",
                     }}
                     aria-describedby={slotError ? "slot-error" : undefined}
