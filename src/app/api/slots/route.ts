@@ -5,26 +5,37 @@ import {
   rangesOverlap,
   timeStringToMinutes,
 } from "@/lib/slots";
+import { formatInTimeZone } from "date-fns-tz";
 
-function parseLocalDate(dateString: string) {
+const SALON_TIME_ZONE = "Asia/Kolkata";
+
+function parseDateParts(dateString: string) {
   const [year, month, day] = dateString.split("-").map(Number);
-  return new Date(year, month - 1, day, 0, 0, 0, 0);
+  return { year, month, day };
 }
 
-function getLocalDateOnly(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+function getZonedDateString(date: Date, timeZone: string) {
+  return formatInTimeZone(date, timeZone, "yyyy-MM-dd");
 }
 
-function getCurrentLocalMinutes(date: Date) {
-  return date.getHours() * 60 + date.getMinutes();
+function getZonedCurrentMinutes(date: Date, timeZone: string) {
+  const hours = Number(formatInTimeZone(date, timeZone, "HH"));
+  const minutes = Number(formatInTimeZone(date, timeZone, "mm"));
+  return hours * 60 + minutes;
 }
 
-function combineDateAndMinutes(dateString: string, totalMinutes: number) {
-  const [year, month, day] = dateString.split("-").map(Number);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+function getZonedTimeParts(date: Date, timeZone: string) {
+  return {
+    year: Number(formatInTimeZone(date, timeZone, "yyyy")),
+    month: Number(formatInTimeZone(date, timeZone, "MM")),
+    day: Number(formatInTimeZone(date, timeZone, "dd")),
+  };
+}
 
-  return new Date(year, month - 1, day, hours, minutes, 0, 0);
+function compareDateOnly(a: string, b: string) {
+  const aNum = Number(a.replaceAll("-", ""));
+  const bNum = Number(b.replaceAll("-", ""));
+  return aNum - bNum;
 }
 
 export async function GET(request: NextRequest) {
@@ -40,15 +51,21 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const requestedDate = parseLocalDate(date);
+  const dateParts = parseDateParts(date);
 
-  if (Number.isNaN(requestedDate.getTime())) {
+  if (
+    Number.isNaN(dateParts.year) ||
+    Number.isNaN(dateParts.month) ||
+    Number.isNaN(dateParts.day)
+  ) {
     return NextResponse.json({ error: "Invalid date" }, { status: 400 });
   }
 
-  const today = getLocalDateOnly(new Date());
+  const now = new Date();
+  const todayInSalonTz = getZonedDateString(now, SALON_TIME_ZONE);
+  const isToday = date === todayInSalonTz;
 
-  if (requestedDate.getTime() < today.getTime()) {
+  if (compareDateOnly(date, todayInSalonTz) < 0) {
     return NextResponse.json({
       date,
       serviceId,
@@ -76,10 +93,7 @@ export async function GET(request: NextRequest) {
   const closeMinutes = timeStringToMinutes(settings.closeTime);
   const duration = service.durationMin;
   const slotStep = 15;
-
-  const now = new Date();
-  const isToday = requestedDate.getTime() === today.getTime();
-  const currentMinutes = getCurrentLocalMinutes(now);
+  const currentMinutes = getZonedCurrentMinutes(now, SALON_TIME_ZONE);
 
   if (isToday && currentMinutes >= closeMinutes) {
     return NextResponse.json({
@@ -92,11 +106,20 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  const startOfDay = parseLocalDate(date);
+  const startOfDay = new Date(
+    dateParts.year,
+    dateParts.month - 1,
+    dateParts.day,
+    0,
+    0,
+    0,
+    0
+  );
+
   const endOfDay = new Date(
-    startOfDay.getFullYear(),
-    startOfDay.getMonth(),
-    startOfDay.getDate(),
+    dateParts.year,
+    dateParts.month - 1,
+    dateParts.day,
     23,
     59,
     59,
@@ -123,12 +146,22 @@ export async function GET(request: NextRequest) {
   });
 
   const bookedRanges = appointments.map((appointment) => {
-    const start = appointment.startTime;
-    const end = appointment.endTime;
+    const startHours = Number(
+      formatInTimeZone(appointment.startTime, SALON_TIME_ZONE, "HH")
+    );
+    const startMinutes = Number(
+      formatInTimeZone(appointment.startTime, SALON_TIME_ZONE, "mm")
+    );
+    const endHours = Number(
+      formatInTimeZone(appointment.endTime, SALON_TIME_ZONE, "HH")
+    );
+    const endMinutes = Number(
+      formatInTimeZone(appointment.endTime, SALON_TIME_ZONE, "mm")
+    );
 
     return {
-      startMinutes: start.getHours() * 60 + start.getMinutes(),
-      endMinutes: end.getHours() * 60 + end.getMinutes(),
+      startMinutes: startHours * 60 + startMinutes,
+      endMinutes: endHours * 60 + endMinutes,
     };
   });
 
@@ -145,10 +178,8 @@ export async function GET(request: NextRequest) {
       continue;
     }
 
-    if (isToday) {
-      if (slotStart <= currentMinutes) {
-        continue;
-      }
+    if (isToday && slotStart <= currentMinutes) {
+      continue;
     }
 
     const hasConflict = bookedRanges.some((booking) =>
