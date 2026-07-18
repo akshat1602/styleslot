@@ -44,7 +44,7 @@ export default function DashboardNavLinks() {
                     boxShadow: "var(--shadow-sm)",
                   }
                 : {
-                    background: "rgba(255, 250, 247, 0.96)",
+                    background: "var(--surface-soft)",
                     color: "var(--text-muted)",
                     border: "1px solid var(--border-strong)",
                   }

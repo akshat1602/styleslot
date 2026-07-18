@@ -120,7 +120,7 @@ function StatusFilterLinks({
           <Link
             key={filter.value}
             href={href}
-            className="rounded-full px-4 py-2 text-sm font-medium transition"
+            className="ui-pill text-sm font-medium"
             style={
               isActive
                 ? {
@@ -319,7 +319,7 @@ function StatusActionButtons({
       {isBooked ? (
         <Link
           href={`/dashboard/appointments/${appointmentId}/edit?date=${selectedDate}`}
-          className="ui-btn ui-btn-primary !rounded-xl !px-3 !py-2 !text-xs"
+          className="ui-btn ui-btn-secondary !rounded-xl !px-3 !py-2 !text-xs"
         >
           Reschedule
         </Link>
@@ -327,7 +327,7 @@ function StatusActionButtons({
         <button
           type="button"
           disabled
-          className="rounded-xl px-3 py-2 text-xs font-medium"
+          className="ui-btn ui-btn-secondary !rounded-xl !px-3 !py-2 !text-xs disabled:cursor-not-allowed"
           style={{
             background: "var(--surface-soft)",
             color: "var(--text-soft)",
@@ -344,9 +344,10 @@ function StatusActionButtons({
         <button
           type="submit"
           disabled={isCompleted || isLocked}
-          className="rounded-xl px-3 py-2 text-xs font-medium text-white transition disabled:cursor-not-allowed"
+          className="ui-btn !rounded-xl !px-3 !py-2 !text-xs font-medium text-white disabled:cursor-not-allowed"
           style={{
-            background: isCompleted || isLocked ? "#bdd8b7" : "var(--success)",
+            background:
+              isCompleted || isLocked ? "#bdd8b7" : "var(--success)",
           }}
         >
           Complete
@@ -360,9 +361,10 @@ function StatusActionButtons({
         <button
           type="submit"
           disabled={isCancelled || isLocked}
-          className="rounded-xl px-3 py-2 text-xs font-medium text-white transition disabled:cursor-not-allowed"
+          className="ui-btn !rounded-xl !px-3 !py-2 !text-xs font-medium text-white disabled:cursor-not-allowed"
           style={{
-            background: isCancelled || isLocked ? "#e7c4c0" : "var(--danger)",
+            background:
+              isCancelled || isLocked ? "#e7c4c0" : "var(--danger)",
           }}
         >
           Cancel
@@ -395,6 +397,20 @@ function PaginationControls({
     return null;
   }
 
+  const prevHref = buildDashboardHref({
+    date: selectedDate,
+    status: selectedStatus,
+    query: searchQuery,
+    page: currentPage - 1,
+  });
+
+  const nextHref = buildDashboardHref({
+    date: selectedDate,
+    status: selectedStatus,
+    query: searchQuery,
+    page: currentPage + 1,
+  });
+
   return (
     <div className="ui-card mt-6 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm" style={{ color: "var(--text-muted)" }}>
@@ -404,14 +420,9 @@ function PaginationControls({
 
       <div className="flex gap-2">
         <Link
-          href={buildDashboardHref({
-            date: selectedDate,
-            status: selectedStatus,
-            query: searchQuery,
-            page: currentPage - 1,
-          })}
+          href={prevHref}
           aria-disabled={currentPage === 1}
-          className="rounded-xl px-4 py-2 text-sm font-medium transition"
+          className="ui-btn ui-btn-secondary disabled:cursor-not-allowed"
           style={
             currentPage === 1
               ? {
@@ -419,24 +430,16 @@ function PaginationControls({
                   background: "var(--surface-soft)",
                   color: "var(--text-soft)",
                 }
-              : {
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                }
+              : undefined
           }
         >
           Previous
         </Link>
 
         <Link
-          href={buildDashboardHref({
-            date: selectedDate,
-            status: selectedStatus,
-            query: searchQuery,
-            page: currentPage + 1,
-          })}
+          href={nextHref}
           aria-disabled={currentPage === totalPages}
-          className="rounded-xl px-4 py-2 text-sm font-medium transition"
+          className="ui-btn ui-btn-primary disabled:cursor-not-allowed"
           style={
             currentPage === totalPages
               ? {
@@ -444,10 +447,7 @@ function PaginationControls({
                   background: "var(--surface-soft)",
                   color: "var(--text-soft)",
                 }
-              : {
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                }
+              : undefined
           }
         >
           Next
@@ -614,16 +614,25 @@ function RevenueBreakdownPanel({
                 }}
               >
                 <div>
-                  <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
+                  <p
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text)" }}
+                  >
                     {item.date}
                   </p>
-                  <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+                  <p
+                    className="mt-1 text-sm"
+                    style={{ color: "var(--text-muted)" }}
+                  >
                     {item.completedCount} completed appointment
                     {item.completedCount === 1 ? "" : "s"}
                   </p>
                 </div>
 
-                <p className="text-sm font-semibold" style={{ color: "var(--text)" }}>
+                <p
+                  className="text-sm font-semibold"
+                  style={{ color: "var(--text)" }}
+                >
                   ₹{item.revenue}
                 </p>
               </div>
@@ -713,7 +722,7 @@ function RecentAppointmentsPanel({
 
                   <span
                     className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                      appointment.status
+                      appointment.status,
                     )}`}
                     style={
                       appointment.status === "BOOKED" ||
@@ -848,7 +857,7 @@ export default async function DashboardPage({
   const totalFilteredAppointments = filteredAppointments.length;
   const totalPages = Math.max(
     1,
-    Math.ceil(totalFilteredAppointments / PAGE_SIZE)
+    Math.ceil(totalFilteredAppointments / PAGE_SIZE),
   );
   const safeCurrentPage = currentPage > totalPages ? totalPages : currentPage;
 
@@ -858,13 +867,13 @@ export default async function DashboardPage({
 
   const totalAppointments = allAppointmentsForDay.length;
   const bookedCount = allAppointmentsForDay.filter(
-    (appointment) => appointment.status === "BOOKED"
+    (appointment) => appointment.status === "BOOKED",
   ).length;
   const completedCount = allAppointmentsForDay.filter(
-    (appointment) => appointment.status === "COMPLETED"
+    (appointment) => appointment.status === "COMPLETED",
   ).length;
   const cancelledCount = allAppointmentsForDay.filter(
-    (appointment) => appointment.status === "CANCELLED"
+    (appointment) => appointment.status === "CANCELLED",
   ).length;
 
   const completedRevenue = allAppointmentsForDay
@@ -872,7 +881,9 @@ export default async function DashboardPage({
     .reduce((sum, appointment) => sum + appointment.service.price, 0);
 
   const totalServices = allServices.length;
-  const activeServices = allServices.filter((service) => service.isActive).length;
+  const activeServices = allServices.filter(
+    (service) => service.isActive,
+  ).length;
   const weeklyAppointmentsCount = weeklyAppointments.length;
   const weeklyCompletedRevenue = weeklyAppointments
     .filter((appointment) => appointment.status === "COMPLETED")
@@ -927,293 +938,352 @@ export default async function DashboardPage({
     const completedForDay = weeklyAppointments.filter(
       (appointment) =>
         format(appointment.appointmentDate, "yyyy-MM-dd") === key &&
-        appointment.status === "COMPLETED"
+        appointment.status === "COMPLETED",
     );
 
     return {
       date: key,
       revenue: completedForDay.reduce(
         (sum, appointment) => sum + appointment.service.price,
-        0
+        0,
       ),
       completedCount: completedForDay.length,
     };
   });
 
   return (
-    <section className="p-3 sm:p-4 lg:p-5">
-      <div className="ui-hero-card mb-6 p-6 sm:p-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className="ui-pill"
-                style={{
-                  background: "var(--primary)",
-                  color: "var(--primary-foreground)",
-                }}
-              >
-                Overview
-              </span>
-              <span
-                className="ui-pill"
-                style={{
-                  background: "var(--surface)",
-                  color: "var(--text-muted)",
-                  boxShadow: "inset 0 0 0 1px var(--border)",
-                }}
-              >
-                Daily operations
-              </span>
-            </div>
+    <main className="ui-shell">
+      <div className="ui-container py-4 lg:py-6">
+        <section>
+          <div className="ui-hero-card mb-6 p-6 sm:p-8">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className="ui-pill"
+                    style={{
+                      background: "var(--primary)",
+                      color: "var(--primary-foreground)",
+                    }}
+                  >
+                    Overview
+                  </span>
+                  <span
+                    className="ui-pill"
+                    style={{
+                      background: "var(--surface)",
+                      color: "var(--text-muted)",
+                      boxShadow: "inset 0 0 0 1px var(--border)",
+                    }}
+                  >
+                    Daily operations
+                  </span>
+                </div>
 
-            <p
-              className="mt-4 text-sm font-medium"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Salon dashboard
-            </p>
-            <h2
-              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
-              style={{ color: "var(--text)" }}
-            >
-              Daily appointments
-            </h2>
-            <p
-              className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
-              style={{ color: "var(--text-muted)" }}
-            >
-              Track bookings, monitor revenue, manage services, and take quick
-              actions from one place.
-            </p>
+                <p
+                  className="mt-4 text-sm font-medium"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Salon dashboard
+                </p>
+                <h2
+                  className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+                  style={{ color: "var(--text)" }}
+                >
+                  Daily appointments
+                </h2>
+                <p
+                  className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Track bookings, monitor revenue, manage services, and take
+                  quick actions from one place.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 lg:min-w-[260px] lg:items-stretch">
+                <DashboardDateFilter selectedDate={selectedDate} />
+
+                <Link
+                  href="/dashboard/services"
+                  className="ui-btn ui-btn-primary w-full"
+                >
+                  Manage services
+                </Link>
+              </div>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3 lg:min-w-[260px] lg:items-stretch">
-            <DashboardDateFilter selectedDate={selectedDate} />
+          <SummaryCards
+            totalAppointments={totalAppointments}
+            bookedCount={bookedCount}
+            completedCount={completedCount}
+            cancelledCount={cancelledCount}
+            completedRevenue={completedRevenue}
+          />
+
+          <AnalyticsCards
+            totalServices={totalServices}
+            activeServices={activeServices}
+            weeklyAppointments={weeklyAppointmentsCount}
+            weeklyCompletedRevenue={weeklyCompletedRevenue}
+          />
+
+          <div className="mb-6 grid gap-6 xl:grid-cols-3 xl:items-stretch">
+            <div className="xl:col-span-1">
+              <TopServicesPanel items={topServices} />
+            </div>
+
+            <div className="xl:col-span-1">
+              <RevenueBreakdownPanel items={revenueByDay} />
+            </div>
+
+            <div className="xl:col-span-1">
+              <RecentAppointmentsPanel items={recentAppointments} />
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <SearchForm
+              selectedDate={selectedDate}
+              selectedStatus={selectedStatus}
+              searchQuery={searchQuery}
+            />
+          </div>
+
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p
+              className="text-sm leading-6"
+              style={{ color: "var(--text-muted)" }}
+            >
+              Showing{" "}
+              <span className="font-medium">
+                {totalFilteredAppointments === 0 ? 0 : startIndex + 1}
+              </span>
+              -
+              <span className="font-medium">
+                {Math.min(endIndex, totalFilteredAppointments)}
+              </span>{" "}
+              of{" "}
+              <span className="font-medium">
+                {totalFilteredAppointments}
+              </span>{" "}
+              appointment
+              {totalFilteredAppointments === 1 ? "" : "s"} on{" "}
+              <span className="font-medium">{selectedDate}</span>
+              {selectedStatus !== "ALL" ? (
+                <>
+                  {" "}
+                  ·{" "}
+                  <span className="font-medium">
+                    {getStatusFilterLabel(selectedStatus)}
+                  </span>
+                </>
+              ) : null}
+              {searchQuery ? (
+                <>
+                  {" "}
+                  · <span className="font-medium">Search:</span> "
+                  {searchQuery}"
+                </>
+              ) : null}
+            </p>
 
             <Link
-              href="/dashboard/services"
-              className="ui-btn ui-btn-primary w-full"
-            >
-              Manage services
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <SummaryCards
-        totalAppointments={totalAppointments}
-        bookedCount={bookedCount}
-        completedCount={completedCount}
-        cancelledCount={cancelledCount}
-        completedRevenue={completedRevenue}
-      />
-
-      <AnalyticsCards
-        totalServices={totalServices}
-        activeServices={activeServices}
-        weeklyAppointments={weeklyAppointmentsCount}
-        weeklyCompletedRevenue={weeklyCompletedRevenue}
-      />
-
-      <div className="mb-6 grid gap-6 xl:grid-cols-3 xl:items-stretch">
-        <div className="xl:col-span-1">
-          <TopServicesPanel items={topServices} />
-        </div>
-
-        <div className="xl:col-span-1">
-          <RevenueBreakdownPanel items={revenueByDay} />
-        </div>
-
-        <div className="xl:col-span-1">
-          <RecentAppointmentsPanel items={recentAppointments} />
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <SearchForm
-          selectedDate={selectedDate}
-          selectedStatus={selectedStatus}
-          searchQuery={searchQuery}
-        />
-      </div>
-
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm leading-6" style={{ color: "var(--text-muted)" }}>
-          Showing{" "}
-          <span className="font-medium">
-            {totalFilteredAppointments === 0 ? 0 : startIndex + 1}
-          </span>
-          -
-          <span className="font-medium">
-            {Math.min(endIndex, totalFilteredAppointments)}
-          </span>{" "}
-          of <span className="font-medium">{totalFilteredAppointments}</span>{" "}
-          appointment
-          {totalFilteredAppointments === 1 ? "" : "s"} on{" "}
-          <span className="font-medium">{selectedDate}</span>
-          {selectedStatus !== "ALL" ? (
-            <>
-              {" "}
-              ·{" "}
-              <span className="font-medium">
-                {getStatusFilterLabel(selectedStatus)}
-              </span>
-            </>
-          ) : null}
-          {searchQuery ? (
-            <>
-              {" "}
-              · <span className="font-medium">Search:</span> "{searchQuery}"
-            </>
-          ) : null}
-        </p>
-
-        <Link
-          href="/"
-          className="text-sm font-medium underline underline-offset-4"
-          style={{ color: "var(--text-muted)" }}
-        >
-          Back to booking page
-        </Link>
-      </div>
-
-      <div className="mb-6">
-        <StatusFilterLinks
-          selectedDate={selectedDate}
-          selectedStatus={selectedStatus}
-          searchQuery={searchQuery}
-        />
-      </div>
-
-      {appointments.length === 0 ? (
-        <div className="ui-card p-8 text-center sm:p-10">
-          <div className="mx-auto max-w-md">
-            <div
-              className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl"
-              style={{
-                background: "var(--surface-soft)",
-                color: "var(--text-muted)",
-              }}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  d="M8 2v4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M16 2v4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <rect x="3" y="5" width="18" height="16" rx="2" />
-                <path
-                  d="M3 10h18"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-
-            <h2
-              className="mt-4 text-lg font-semibold"
-              style={{ color: "var(--text)" }}
-            >
-              No appointments found
-            </h2>
-            <p
-              className="mt-2 text-sm leading-6"
+              href="/"
+              className="text-sm font-medium underline underline-offset-4"
               style={{ color: "var(--text-muted)" }}
             >
-              No bookings match the current date, status, and search filters.
-            </p>
+              Back to booking page
+            </Link>
           </div>
-        </div>
-      ) : (
-        <>
-          <div
-            className="hidden overflow-hidden rounded-3xl lg:block"
-            style={{
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
-              boxShadow: "var(--shadow-sm)",
-            }}
-          >
-            <table className="min-w-full text-left">
-              <thead
-                className="text-sm"
+
+          <div className="mb-6">
+            <StatusFilterLinks
+              selectedDate={selectedDate}
+              selectedStatus={selectedStatus}
+              searchQuery={searchQuery}
+            />
+          </div>
+
+          {appointments.length === 0 ? (
+            <div className="ui-card p-8 text-center sm:p-10">
+              <div className="mx-auto max-w-md">
+                <div
+                  className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl"
+                  style={{
+                    background: "var(--surface-soft)",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      d="M8 2v4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M16 2v4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path
+                      d="M3 10h18"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <h2
+                  className="mt-4 text-lg font-semibold"
+                  style={{ color: "var(--text)" }}
+                >
+                  No appointments found
+                </h2>
+                <p
+                  className="mt-2 text-sm leading-6"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  No bookings match the current date, status, and search
+                  filters.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div
+                className="hidden overflow-hidden rounded-3xl lg:block"
                 style={{
-                  background: "var(--surface-muted)",
-                  color: "var(--text-muted)",
+                  border: "1px solid var(--border)",
+                  background: "var(--surface)",
+                  boxShadow: "var(--shadow-sm)",
                 }}
               >
-                <tr>
-                  <th className="px-4 py-4 font-medium">Time</th>
-                  <th className="px-4 py-4 font-medium">Service</th>
-                  <th className="px-4 py-4 font-medium">Customer</th>
-                  <th className="px-4 py-4 font-medium">Phone</th>
-                  <th className="px-4 py-4 font-medium">Status</th>
-                  <th className="px-4 py-4 font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {appointments.map((appointment) => (
-                  <tr
-                    key={appointment.id}
-                    className="align-top"
-                    style={{ borderTop: "1px solid var(--border)" }}
+                <table className="min-w-full text-left">
+                  <thead
+                    className="text-sm"
+                    style={{
+                      background: "var(--surface-muted)",
+                      color: "var(--text-muted)",
+                    }}
                   >
-                    <td
-                      className="px-4 py-4 text-sm font-medium"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {format(appointment.startTime, "hh:mm a")}
-                    </td>
-                    <td className="px-4 py-4">
-                      <p
-                        className="text-sm font-semibold"
-                        style={{ color: "var(--text)" }}
+                    <tr>
+                      <th className="px-4 py-4 font-medium">Time</th>
+                      <th className="px-4 py-4 font-medium">Service</th>
+                      <th className="px-4 py-4 font-medium">Customer</th>
+                      <th className="px-4 py-4 font-medium">Phone</th>
+                      <th className="px-4 py-4 font-medium">Status</th>
+                      <th className="px-4 py-4 font-medium">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {appointments.map((appointment) => (
+                      <tr
+                        key={appointment.id}
+                        className="align-top"
+                        style={{ borderTop: "1px solid var(--border)" }}
                       >
-                        {appointment.service.name}
-                      </p>
-                      <p
-                        className="mt-1 text-xs"
-                        style={{ color: "var(--text-muted)" }}
-                      >
-                        {appointment.service.durationMin} min · ₹
-                        {appointment.service.price}
-                      </p>
-                    </td>
-                    <td
-                      className="px-4 py-4 text-sm"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {appointment.customerName}
-                    </td>
-                    <td
-                      className="px-4 py-4 text-sm"
-                      style={{ color: "var(--text-muted)" }}
-                    >
-                      {appointment.customerPhone}
-                    </td>
-                    <td className="px-4 py-4">
+                        <td
+                          className="px-4 py-4 text-sm font-medium"
+                          style={{ color: "var(--text)" }}
+                        >
+                          {format(appointment.startTime, "hh:mm a")}
+                        </td>
+                        <td className="px-4 py-4">
+                          <p
+                            className="text-sm font-semibold"
+                            style={{ color: "var(--text)" }}
+                          >
+                            {appointment.service.name}
+                          </p>
+                          <p
+                            className="mt-1 text-xs"
+                            style={{ color: "var(--text-muted)" }}
+                          >
+                            {appointment.service.durationMin} min · ₹
+                            {appointment.service.price}
+                          </p>
+                        </td>
+                        <td
+                          className="px-4 py-4 text-sm"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {appointment.customerName}
+                        </td>
+                        <td
+                          className="px-4 py-4 text-sm"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {appointment.customerPhone}
+                        </td>
+                        <td className="px-4 py-4">
+                          <span
+                            className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                              appointment.status,
+                            )}`}
+                            style={
+                              appointment.status === "BOOKED" ||
+                              appointment.status === "COMPLETED" ||
+                              appointment.status === "CANCELLED"
+                                ? undefined
+                                : {
+                                    background: "var(--surface-soft)",
+                                    color: "var(--text-muted)",
+                                    boxShadow:
+                                      "inset 0 0 0 1px var(--border)",
+                                  }
+                            }
+                          >
+                            {appointment.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-4">
+                          <StatusActionButtons
+                            appointmentId={appointment.id}
+                            currentStatus={appointment.status}
+                            selectedDate={selectedDate}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="grid gap-3 lg:hidden">
+                {appointments.map((appointment) => (
+                  <div key={appointment.id} className="ui-card p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p
+                          className="text-sm font-semibold"
+                          style={{ color: "var(--text)" }}
+                        >
+                          {format(appointment.startTime, "hh:mm a")}
+                        </p>
+                        <p
+                          className="mt-1 text-sm"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {appointment.service.name}
+                        </p>
+                      </div>
+
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                          appointment.status
+                          appointment.status,
                         )}`}
                         style={
-                          appointment.status === "BOOKED"
-                            ? undefined
-                            : appointment.status === "COMPLETED"
-                            ? undefined
-                            : appointment.status === "CANCELLED"
+                          appointment.status === "BOOKED" ||
+                          appointment.status === "COMPLETED" ||
+                          appointment.status === "CANCELLED"
                             ? undefined
                             : {
                                 background: "var(--surface-soft)",
@@ -1224,100 +1294,65 @@ export default async function DashboardPage({
                       >
                         {appointment.status}
                       </span>
-                    </td>
-                    <td className="px-4 py-4">
+                    </div>
+
+                    <div
+                      className="mt-4 space-y-1 text-sm"
+                      style={{ color: "var(--text-muted)" }}
+                    >
+                      <p>
+                        <span
+                          className="font-medium"
+                          style={{ color: "var(--text)" }}
+                        >
+                          Customer:
+                        </span>{" "}
+                        {appointment.customerName}
+                      </p>
+                      <p>
+                        <span
+                          className="font-medium"
+                          style={{ color: "var(--text)" }}
+                        >
+                          Phone:
+                        </span>{" "}
+                        {appointment.customerPhone}
+                      </p>
+                      <p>
+                        <span
+                          className="font-medium"
+                          style={{ color: "var(--text)" }}
+                        >
+                          Service:
+                        </span>{" "}
+                        {appointment.service.name} ·{" "}
+                        {appointment.service.durationMin} min · ₹
+                        {appointment.service.price}
+                      </p>
+                    </div>
+
+                    <div className="mt-4">
                       <StatusActionButtons
                         appointmentId={appointment.id}
                         currentStatus={appointment.status}
                         selectedDate={selectedDate}
                       />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="grid gap-3 lg:hidden">
-            {appointments.map((appointment) => (
-              <div key={appointment.id} className="ui-card p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p
-                      className="text-sm font-semibold"
-                      style={{ color: "var(--text)" }}
-                    >
-                      {format(appointment.startTime, "hh:mm a")}
-                    </p>
-                    <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
-                      {appointment.service.name}
-                    </p>
+                    </div>
                   </div>
-
-                  <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
-                      appointment.status
-                    )}`}
-                    style={
-                      appointment.status === "BOOKED"
-                        ? undefined
-                        : appointment.status === "COMPLETED"
-                        ? undefined
-                        : appointment.status === "CANCELLED"
-                        ? undefined
-                        : {
-                            background: "var(--surface-soft)",
-                            color: "var(--text-muted)",
-                            boxShadow: "inset 0 0 0 1px var(--border)",
-                          }
-                    }
-                  >
-                    {appointment.status}
-                  </span>
-                </div>
-
-                <div className="mt-4 space-y-1 text-sm" style={{ color: "var(--text-muted)" }}>
-                  <p>
-                    <span className="font-medium" style={{ color: "var(--text)" }}>
-                      Customer:
-                    </span>{" "}
-                    {appointment.customerName}
-                  </p>
-                  <p>
-                    <span className="font-medium" style={{ color: "var(--text)" }}>
-                      Phone:
-                    </span>{" "}
-                    {appointment.customerPhone}
-                  </p>
-                  <p>
-                    <span className="font-medium" style={{ color: "var(--text)" }}>
-                      Details:
-                    </span>{" "}
-                    {appointment.service.durationMin} min · ₹
-                    {appointment.service.price}
-                  </p>
-                </div>
-
-                <div className="mt-4">
-                  <StatusActionButtons
-                    appointmentId={appointment.id}
-                    currentStatus={appointment.status}
-                    selectedDate={selectedDate}
-                  />
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <PaginationControls
-            selectedDate={selectedDate}
-            selectedStatus={selectedStatus}
-            searchQuery={searchQuery}
-            currentPage={safeCurrentPage}
-            totalPages={totalPages}
-          />
-        </>
-      )}
-    </section>
+              <PaginationControls
+                selectedDate={selectedDate}
+                selectedStatus={selectedStatus}
+                searchQuery={searchQuery}
+                currentPage={safeCurrentPage}
+                totalPages={totalPages}
+              />
+            </>
+          )}
+        </section>
+      </div>
+    </main>
   );
 }

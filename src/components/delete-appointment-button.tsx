@@ -16,7 +16,7 @@ export default function DeleteAppointmentButton({
       action={action}
       onSubmit={(event) => {
         const confirmed = window.confirm(
-          "Are you sure you want to delete this appointment?"
+          "Are you sure you want to delete this appointment?",
         );
 
         if (!confirmed) {
@@ -28,17 +28,11 @@ export default function DeleteAppointmentButton({
       <input type="hidden" name="date" value={selectedDate} />
       <button
         type="submit"
-        className="rounded-xl border px-3 py-2 text-xs font-medium transition"
+        className="ui-btn !rounded-xl !px-3 !py-2 !text-xs font-medium"
         style={{
-          borderColor: "#d8a9a2",
-          background: "var(--surface)",
+          background: "var(--surface-soft)",
           color: "var(--danger)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "var(--danger-soft)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "var(--surface)";
+          border: "1px solid var(--border-strong)",
         }}
       >
         Delete
