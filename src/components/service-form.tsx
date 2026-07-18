@@ -50,7 +50,10 @@ export default function ServiceForm({
             placeholder="Haircut"
             className="ui-input"
           />
-          <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
+          <p
+            className="mt-2 text-xs leading-5"
+            style={{ color: "var(--text-muted)" }}
+          >
             Choose a short, customer-friendly name that is easy to understand at
             a glance.
           </p>
@@ -70,7 +73,10 @@ export default function ServiceForm({
               defaultValue={initialValues?.durationMin ?? 30}
               className="ui-input"
             />
-            <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
+            <p
+              className="mt-2 text-xs leading-5"
+              style={{ color: "var(--text-muted)" }}
+            >
               Use realistic timing so booking slots are generated correctly.
             </p>
           </div>
@@ -88,7 +94,10 @@ export default function ServiceForm({
               defaultValue={initialValues?.price ?? 0}
               className="ui-input"
             />
-            <p className="mt-2 text-xs leading-5" style={{ color: "var(--text-muted)" }}>
+            <p
+              className="mt-2 text-xs leading-5"
+              style={{ color: "var(--text-muted)" }}
+            >
               Enter the amount customers should see while booking this service.
             </p>
           </div>
@@ -101,7 +110,10 @@ export default function ServiceForm({
             background: "var(--surface-muted)",
           }}
         >
-          <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
+          <p
+            className="text-sm font-medium"
+            style={{ color: "var(--text)" }}
+          >
             {isEditing ? "Editing service" : "Before you save"}
           </p>
           <p
@@ -119,12 +131,12 @@ export default function ServiceForm({
             style={
               state.ok
                 ? {
-                    borderColor: "#c9dcc4",
+                    borderColor: "var(--border)",
                     background: "var(--success-soft)",
                     color: "var(--success)",
                   }
                 : {
-                    borderColor: "#e5c7c2",
+                    borderColor: "var(--border)",
                     background: "var(--danger-soft)",
                     color: "var(--danger)",
                   }

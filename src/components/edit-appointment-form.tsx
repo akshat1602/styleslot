@@ -50,12 +50,12 @@ export default function EditAppointmentForm({
 
   const [state, formAction, pending] = useActionState(
     updateAppointment,
-    initialState
+    initialState,
   );
 
   const selectedService = useMemo(
     () => services.find((service) => service.id === selectedServiceId),
-    [services, selectedServiceId]
+    [services, selectedServiceId],
   );
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function EditAppointmentForm({
 
       try {
         const res = await fetch(
-          `/api/slots?serviceId=${selectedServiceId}&date=${selectedDate}`
+          `/api/slots?serviceId=${selectedServiceId}&date=${selectedDate}`,
         );
 
         const data = await res.json();
@@ -89,7 +89,8 @@ export default function EditAppointmentForm({
           selectedServiceId === initialServiceId;
 
         const mergedSlots =
-          shouldIncludeInitialTime && !slotData.availableSlots.includes(initialTime)
+          shouldIncludeInitialTime &&
+          !slotData.availableSlots.includes(initialTime)
             ? [initialTime, ...slotData.availableSlots]
             : slotData.availableSlots;
 
@@ -185,7 +186,7 @@ export default function EditAppointmentForm({
                     key={slot}
                     type="button"
                     onClick={() => setSelectedSlot(slot)}
-                    className="rounded-xl px-3 py-2 text-sm font-medium transition"
+                    className="ui-btn !rounded-xl !px-3 !py-2 text-sm font-medium"
                     style={
                       isSelected
                         ? {
@@ -195,7 +196,7 @@ export default function EditAppointmentForm({
                             boxShadow: "var(--shadow-sm)",
                           }
                         : {
-                            background: "var(--surface)",
+                            background: "var(--surface-soft)",
                             color: "var(--text-muted)",
                             border: "1px solid var(--border-strong)",
                           }
@@ -219,7 +220,10 @@ export default function EditAppointmentForm({
               border: "1px solid var(--border)",
             }}
           >
-            <p className="text-sm font-medium" style={{ color: "var(--text)" }}>
+            <p
+              className="text-sm font-medium"
+              style={{ color: "var(--text)" }}
+            >
               Updated appointment preview
             </p>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
@@ -227,7 +231,10 @@ export default function EditAppointmentForm({
               {selectedService.price}
             </p>
             {selectedSlot ? (
-              <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+              <p
+                className="mt-1 text-sm"
+                style={{ color: "var(--text-muted)" }}
+              >
                 New slot: {selectedDate} at {selectedSlot}
               </p>
             ) : null}
@@ -240,12 +247,12 @@ export default function EditAppointmentForm({
             style={
               state.ok
                 ? {
-                    borderColor: "#c9dcc4",
+                    borderColor: "var(--border)",
                     background: "var(--success-soft)",
                     color: "var(--success)",
                   }
                 : {
-                    borderColor: "#e5c7c2",
+                    borderColor: "var(--border)",
                     background: "var(--danger-soft)",
                     color: "var(--danger)",
                   }

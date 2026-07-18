@@ -14,7 +14,13 @@ export default function DashboardError({
       <section className="ui-container py-16 sm:py-24">
         <div className="mx-auto max-w-2xl">
           <div className="ui-hero-card p-8 text-center sm:p-10">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-100 text-red-700 shadow-sm">
+            <div
+              className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm"
+              style={{
+                background: "var(--danger-soft)",
+                color: "var(--danger)",
+              }}
+            >
               <svg
                 viewBox="0 0 24 24"
                 className="h-7 w-7"
@@ -40,15 +46,24 @@ export default function DashboardError({
               </svg>
             </div>
 
-            <p className="mt-6 text-sm font-medium text-neutral-500">
+            <p
+              className="mt-6 text-sm font-medium"
+              style={{ color: "var(--text-muted)" }}
+            >
               Dashboard error
             </p>
 
-            <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900">
+            <h1
+              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+              style={{ color: "var(--text)" }}
+            >
               Something went wrong
             </h1>
 
-            <p className="mt-3 text-sm leading-6 text-neutral-600 sm:text-base">
+            <p
+              className="mt-3 text-sm leading-6 sm:text-base"
+              style={{ color: "var(--text-muted)" }}
+            >
               We couldn&apos;t load the dashboard right now. Please try again or
               return to the booking page.
             </p>
@@ -68,7 +83,14 @@ export default function DashboardError({
             </div>
 
             {process.env.NODE_ENV === "development" ? (
-              <pre className="mt-8 overflow-x-auto rounded-2xl border border-red-100 bg-red-50 p-4 text-left text-xs text-red-700">
+              <pre
+                className="mt-8 overflow-x-auto rounded-2xl border p-4 text-left text-xs"
+                style={{
+                  borderColor: "var(--border)",
+                  background: "var(--surface-soft)",
+                  color: "var(--danger)",
+                }}
+              >
                 {error.message}
               </pre>
             ) : null}
