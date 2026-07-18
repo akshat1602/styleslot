@@ -21,7 +21,10 @@ const createAppointmentSchema = z.object({
   appointmentDate: z.string().min(1, "Please select a date."),
   selectedSlot: z.string().min(1, "Please select a time slot."),
   customerName: z.string().trim().min(2, "Please enter your name."),
-  customerPhone: z.string().trim().min(8, "Please enter a valid phone number."),
+  customerPhone: z
+    .string()
+    .trim()
+    .regex(/^\d{10}$/, "Please enter a 10-digit mobile number."),
 });
 
 function combineDateAndTime(dateString: string, timeString: string) {
@@ -52,7 +55,7 @@ function isPastDate(dateString: string) {
     0,
     0,
     0,
-    0
+    0,
   );
 
   return selectedDate < today;
@@ -60,7 +63,7 @@ function isPastDate(dateString: string) {
 
 export async function createAppointment(
   _prevState: CreateAppointmentState,
-  formData: FormData
+  formData: FormData,
 ): Promise<CreateAppointmentState> {
   const raw = {
     serviceId: String(formData.get("serviceId") ?? ""),
@@ -111,7 +114,7 @@ export async function createAppointment(
 
   const startTime = combineDateAndTime(
     parsed.data.appointmentDate,
-    parsed.data.selectedSlot
+    parsed.data.selectedSlot,
   );
 
   if (Number.isNaN(startTime.getTime())) {
@@ -166,7 +169,9 @@ export async function createAppointment(
       ok: false,
       message: "This slot has just been booked. Please choose another time.",
       fieldErrors: {
-        selectedSlot: ["This slot has just been booked. Please choose another time."],
+        selectedSlot: [
+          "This slot has just been booked. Please choose another time.",
+        ],
       },
     };
   }

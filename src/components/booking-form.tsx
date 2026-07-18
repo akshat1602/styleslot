@@ -190,6 +190,16 @@ export default function BookingForm({
     router,
   ]);
 
+  const isPhoneValid = customerPhone.trim().length === 10;
+  const isNameValid = customerName.trim().length > 0;
+  const canSubmit =
+    !pending &&
+    !!selectedServiceId &&
+    !!selectedDate &&
+    !!selectedSlot &&
+    isNameValid &&
+    isPhoneValid;
+
   return (
     <main className="ui-shell">
       <section className="ui-container py-6 sm:py-10">
@@ -946,19 +956,41 @@ export default function BookingForm({
                     id="phone"
                     name="customerPhone"
                     type="tel"
-                    placeholder="Enter phone number"
+                    inputMode="numeric"
+                    pattern="\d{10}"
+                    maxLength={10}
+                    placeholder="Enter 10-digit mobile number"
                     value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    onChange={(e) => {
+                      const digitsOnly = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
+                      setCustomerPhone(digitsOnly);
+                    }}
                     className="ui-input"
+                    style={{
+                      borderColor:
+                        isPhoneValid && !phoneError
+                          ? "var(--success)"
+                          : undefined,
+                    }}
                     aria-invalid={phoneError ? "true" : "false"}
                     aria-describedby={phoneError ? "phone-error" : undefined}
                   />
-                  {!customerPhone.trim() ? (
+                  {!customerPhone.trim() && !phoneError ? (
                     <p
                       className="mt-2 text-sm"
                       style={{ color: "var(--text-muted)" }}
                     >
-                      Add a contact number.
+                      Enter a 10-digit mobile number (no country code).
+                    </p>
+                  ) : null}
+                  {isPhoneValid && !phoneError ? (
+                    <p
+                      className="mt-2 text-xs"
+                      style={{ color: "var(--success)" }}
+                    >
+                      Looks good.
                     </p>
                   ) : null}
                   {phoneError ? (
@@ -1057,14 +1089,7 @@ export default function BookingForm({
 
                 <button
                   type="submit"
-                  disabled={
-                    pending ||
-                    !selectedServiceId ||
-                    !selectedDate ||
-                    !selectedSlot ||
-                    !customerName.trim() ||
-                    !customerPhone.trim()
-                  }
+                  disabled={!canSubmit}
                   className="ui-btn ui-btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {pending ? "Booking..." : "Confirm booking"}
