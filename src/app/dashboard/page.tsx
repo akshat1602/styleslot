@@ -168,11 +168,11 @@ function SearchForm({
         name="query"
         defaultValue={searchQuery}
         placeholder="Search customer, phone, or service"
-        className="ui-input"
+        className="ui-input w-full sm:flex-1"
       />
 
       <div className="flex gap-2">
-        <button type="submit" className="ui-btn ui-btn-primary">
+        <button type="submit" className="ui-btn ui-btn-primary flex-1 sm:flex-none">
           Search
         </button>
 
@@ -182,7 +182,7 @@ function SearchForm({
             status: selectedStatus,
             page: 1,
           })}
-          className="ui-btn ui-btn-secondary"
+          className="ui-btn ui-btn-secondary flex-1 sm:flex-none"
         >
           Clear
         </Link>
@@ -233,14 +233,14 @@ function SummaryCards({
   ];
 
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+    <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 md:grid-cols-3 xl:grid-cols-5">
       {cards.map((card) => (
-        <div key={card.label} className="ui-stat-card">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+        <div key={card.label} className="ui-stat-card p-4 sm:p-5">
+          <p className="text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
             {card.label}
           </p>
           <p
-            className="mt-3 text-2xl font-bold tracking-tight"
+            className="mt-2 text-xl font-bold tracking-tight sm:mt-3 sm:text-2xl"
             style={card.tone}
           >
             {card.value}
@@ -282,14 +282,14 @@ function AnalyticsCards({
   ];
 
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="mb-4 grid grid-cols-2 gap-3 sm:mb-6 xl:grid-cols-4">
       {cards.map((card) => (
-        <div key={card.label} className="ui-stat-card">
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+        <div key={card.label} className="ui-stat-card p-4 sm:p-5">
+          <p className="text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
             {card.label}
           </p>
           <p
-            className="mt-3 text-2xl font-bold tracking-tight"
+            className="mt-2 text-xl font-bold tracking-tight sm:mt-3 sm:text-2xl"
             style={{ color: "var(--text)" }}
           >
             {card.value}
@@ -422,7 +422,7 @@ function PaginationControls({
         <Link
           href={prevHref}
           aria-disabled={currentPage === 1}
-          className="ui-btn ui-btn-secondary disabled:cursor-not-allowed"
+          className="ui-btn ui-btn-secondary flex-1 disabled:cursor-not-allowed sm:flex-none"
           style={
             currentPage === 1
               ? {
@@ -439,7 +439,7 @@ function PaginationControls({
         <Link
           href={nextHref}
           aria-disabled={currentPage === totalPages}
-          className="ui-btn ui-btn-primary disabled:cursor-not-allowed"
+          className="ui-btn ui-btn-primary flex-1 disabled:cursor-not-allowed sm:flex-none"
           style={
             currentPage === totalPages
               ? {
@@ -471,30 +471,30 @@ function TopServicesPanel({
   const visibleItems = items.slice(0, 5);
 
   return (
-    <div className="ui-card flex h-[430px] min-h-0 flex-col p-0">
+    <div className="ui-card flex h-[360px] min-h-0 flex-col p-0 sm:h-[400px] xl:h-[430px]">
       <div
-        className="flex min-h-[92px] items-start justify-between gap-3 border-b px-6 py-5"
+        className="flex flex-col gap-2 border-b px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-6 sm:py-5"
         style={{ borderColor: "var(--border)" }}
       >
         <div>
-          <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
+          <h2 className="text-base font-semibold sm:text-lg" style={{ color: "var(--text)" }}>
             Popular services
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+          <p className="mt-1 text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
             Based on bookings in the last 7 days.
           </p>
         </div>
 
         <Link
           href="/dashboard/services"
-          className="text-sm font-medium underline underline-offset-4"
+          className="text-xs font-medium underline underline-offset-4 sm:text-sm"
           style={{ color: "var(--text-muted)" }}
         >
           View services
         </Link>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 pr-3">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-6 sm:py-4 sm:pr-3">
         {visibleItems.length === 0 ? (
           <div
             className="rounded-2xl border p-5 text-sm"
@@ -508,21 +508,21 @@ function TopServicesPanel({
             No recent service activity found.
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-2 sm:space-y-2.5">
             {visibleItems.map((service, index) => (
               <div
                 key={service.id}
-                className="rounded-2xl border p-3.5"
+                className="rounded-2xl border p-3 sm:p-3.5"
                 style={{
                   borderColor: "var(--border)",
                   background: "var(--surface-muted)",
                 }}
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start justify-between gap-2 sm:gap-3">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <span
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold"
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold sm:h-8 sm:w-8"
                         style={{
                           background: "var(--surface)",
                           color: "var(--text-muted)",
@@ -539,7 +539,7 @@ function TopServicesPanel({
                       </p>
                     </div>
                     <p
-                      className="mt-2 text-sm"
+                      className="mt-2 text-xs sm:text-sm"
                       style={{ color: "var(--text-muted)" }}
                     >
                       {service.totalBookings} booking
@@ -549,7 +549,7 @@ function TopServicesPanel({
                   </div>
 
                   <p
-                    className="text-sm font-semibold"
+                    className="shrink-0 text-sm font-semibold"
                     style={{ color: "var(--text)" }}
                   >
                     ₹{service.revenue}
@@ -574,22 +574,22 @@ function RevenueBreakdownPanel({
   }[];
 }) {
   return (
-    <div className="ui-card flex h-[430px] min-h-0 flex-col p-0">
+    <div className="ui-card flex h-[360px] min-h-0 flex-col p-0 sm:h-[400px] xl:h-[430px]">
       <div
-        className="flex min-h-[92px] items-start justify-between gap-3 border-b px-6 py-5"
+        className="flex flex-col gap-2 border-b px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-6 sm:py-5"
         style={{ borderColor: "var(--border)" }}
       >
         <div>
-          <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
+          <h2 className="text-base font-semibold sm:text-lg" style={{ color: "var(--text)" }}>
             Revenue breakdown
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+          <p className="mt-1 text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
             Completed appointment revenue over the last 7 days.
           </p>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 pr-3">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-6 sm:py-4 sm:pr-3">
         {items.length === 0 ? (
           <div
             className="rounded-2xl border p-5 text-sm"
@@ -603,17 +603,17 @@ function RevenueBreakdownPanel({
             No completed appointment revenue found.
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-2 sm:space-y-2.5">
             {items.map((item) => (
               <div
                 key={item.date}
-                className="flex items-center justify-between rounded-2xl border p-3.5"
+                className="flex items-center justify-between gap-2 rounded-2xl border p-3 sm:p-3.5"
                 style={{
                   borderColor: "var(--border)",
                   background: "var(--surface-muted)",
                 }}
               >
-                <div>
+                <div className="min-w-0">
                   <p
                     className="text-sm font-medium"
                     style={{ color: "var(--text)" }}
@@ -621,7 +621,7 @@ function RevenueBreakdownPanel({
                     {item.date}
                   </p>
                   <p
-                    className="mt-1 text-sm"
+                    className="mt-1 text-xs sm:text-sm"
                     style={{ color: "var(--text-muted)" }}
                   >
                     {item.completedCount} completed appointment
@@ -630,7 +630,7 @@ function RevenueBreakdownPanel({
                 </div>
 
                 <p
-                  className="text-sm font-semibold"
+                  className="shrink-0 text-sm font-semibold"
                   style={{ color: "var(--text)" }}
                 >
                   ₹{item.revenue}
@@ -659,22 +659,22 @@ function RecentAppointmentsPanel({
   }[];
 }) {
   return (
-    <div className="ui-card flex h-[430px] min-h-0 flex-col p-0">
+    <div className="ui-card flex h-[360px] min-h-0 flex-col p-0 sm:h-[400px] xl:h-[430px]">
       <div
-        className="flex min-h-[92px] items-start justify-between gap-3 border-b px-6 py-5"
+        className="flex flex-col gap-2 border-b px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:px-6 sm:py-5"
         style={{ borderColor: "var(--border)" }}
       >
         <div>
-          <h2 className="text-lg font-semibold" style={{ color: "var(--text)" }}>
+          <h2 className="text-base font-semibold sm:text-lg" style={{ color: "var(--text)" }}>
             Recent appointments
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+          <p className="mt-1 text-xs sm:text-sm" style={{ color: "var(--text-muted)" }}>
             Latest bookings across all dates.
           </p>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4 pr-3">
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-6 sm:py-4 sm:pr-3">
         {items.length === 0 ? (
           <div
             className="rounded-2xl border p-5 text-sm"
@@ -688,17 +688,17 @@ function RecentAppointmentsPanel({
             No appointments found.
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div className="space-y-2 sm:space-y-2.5">
             {items.map((appointment) => (
               <div
                 key={appointment.id}
-                className="rounded-2xl border p-3.5"
+                className="rounded-2xl border p-3 sm:p-3.5"
                 style={{
                   borderColor: "var(--border)",
                   background: "var(--surface-muted)",
                 }}
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start justify-between gap-2 sm:gap-3">
                   <div className="min-w-0">
                     <p
                       className="truncate text-sm font-semibold"
@@ -707,13 +707,13 @@ function RecentAppointmentsPanel({
                       {appointment.customerName}
                     </p>
                     <p
-                      className="mt-1 truncate text-sm"
+                      className="mt-1 truncate text-xs sm:text-sm"
                       style={{ color: "var(--text-muted)" }}
                     >
                       {appointment.service.name} · {appointment.customerPhone}
                     </p>
                     <p
-                      className="mt-1 text-sm"
+                      className="mt-1 text-xs sm:text-sm"
                       style={{ color: "var(--text-soft)" }}
                     >
                       {format(appointment.startTime, "dd MMM yyyy, hh:mm a")}
@@ -721,7 +721,7 @@ function RecentAppointmentsPanel({
                   </div>
 
                   <span
-                    className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                    className={`inline-flex shrink-0 rounded-full px-2.5 py-1 text-xs font-medium sm:px-3 ${getStatusClasses(
                       appointment.status,
                     )}`}
                     style={
@@ -955,8 +955,8 @@ export default async function DashboardPage({
     <main className="ui-shell">
       <div className="ui-container py-4 lg:py-6">
         <section>
-          <div className="ui-hero-card mb-6 p-6 sm:p-8">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="ui-hero-card mb-4 p-4 sm:mb-6 sm:p-8">
+            <div className="flex flex-col gap-4 sm:gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
                 <div className="flex flex-wrap items-center gap-2">
                   <span
@@ -987,13 +987,13 @@ export default async function DashboardPage({
                   Salon dashboard
                 </p>
                 <h2
-                  className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+                  className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl"
                   style={{ color: "var(--text)" }}
                 >
                   Daily appointments
                 </h2>
                 <p
-                  className="mt-3 max-w-2xl text-sm leading-6 sm:text-base"
+                  className="mt-3 max-w-2xl text-sm leading-6"
                   style={{ color: "var(--text-muted)" }}
                 >
                   Track bookings, monitor revenue, manage services, and take
@@ -1029,7 +1029,7 @@ export default async function DashboardPage({
             weeklyCompletedRevenue={weeklyCompletedRevenue}
           />
 
-          <div className="mb-6 grid gap-6 xl:grid-cols-3 xl:items-stretch">
+          <div className="mb-4 grid gap-4 sm:mb-6 sm:gap-6 xl:grid-cols-3 xl:items-stretch">
             <div className="xl:col-span-1">
               <TopServicesPanel items={topServices} />
             </div>
@@ -1043,7 +1043,7 @@ export default async function DashboardPage({
             </div>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4 sm:mb-6">
             <SearchForm
               selectedDate={selectedDate}
               selectedStatus={selectedStatus}
@@ -1098,7 +1098,7 @@ export default async function DashboardPage({
             </Link>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 overflow-x-auto">
             <StatusFilterLinks
               selectedDate={selectedDate}
               selectedStatus={selectedStatus}
@@ -1107,7 +1107,7 @@ export default async function DashboardPage({
           </div>
 
           {appointments.length === 0 ? (
-            <div className="ui-card p-8 text-center sm:p-10">
+            <div className="ui-card p-6 text-center sm:p-10">
               <div className="mx-auto max-w-md">
                 <div
                   className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl"
@@ -1261,7 +1261,7 @@ export default async function DashboardPage({
                 {appointments.map((appointment) => (
                   <div key={appointment.id} className="ui-card p-4">
                     <div className="flex items-start justify-between gap-3">
-                      <div>
+                      <div className="min-w-0">
                         <p
                           className="text-sm font-semibold"
                           style={{ color: "var(--text)" }}
@@ -1269,7 +1269,7 @@ export default async function DashboardPage({
                           {format(appointment.startTime, "hh:mm a")}
                         </p>
                         <p
-                          className="mt-1 text-sm"
+                          className="mt-1 truncate text-sm"
                           style={{ color: "var(--text-muted)" }}
                         >
                           {appointment.service.name}
@@ -1277,7 +1277,7 @@ export default async function DashboardPage({
                       </div>
 
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                        className={`inline-flex shrink-0 rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
                           appointment.status,
                         )}`}
                         style={
