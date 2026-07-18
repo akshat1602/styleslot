@@ -23,21 +23,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             style={{ borderBottom: "1px solid var(--border)" }}
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              {/* left title block unchanged */}
+              {/* You can restore the left title block here if needed */}
 
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <DashboardNavLinks />
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:gap-4 lg:w-full lg:justify-end">
+                {/* Nav links: stacked on mobile, inline on larger screens */}
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2 lg:gap-3">
+                  <DashboardNavLinks />
+                </div>
 
-                <ThemeToggle />
+                {/* Theme toggle + Logout row */}
+                <div className="flex items-center gap-2 justify-center sm:justify-start lg:justify-end">
+                  <ThemeToggle />
 
-                <form action={logoutAdmin}>
-                  <button
-                    type="submit"
-                    className="ui-btn ui-btn-secondary w-full sm:w-auto"
-                  >
-                    Logout
-                  </button>
-                </form>
+                  <form action={logoutAdmin}>
+                    <button
+                      type="submit"
+                      className="ui-btn ui-btn-secondary w-full sm:w-auto"
+                    >
+                      Logout
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
